@@ -1,0 +1,7 @@
+# Pin exact versions at kickoff (match what Colab uses), e.g. pandas==2.2.2
+# Run: pip freeze | grep -iE "pandas|scikit-learn|matplotlib|gradio|requests"
+pandas
+scikit-learn
+matplotlib
+gradio
+requests

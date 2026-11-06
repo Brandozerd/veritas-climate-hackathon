@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Gradio
+.gradio/
+flagged/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Secrets (we should never have any, but just in case)
+.env
+*.key
+
+# Big data files (keep small ones in data/; download big ones in the notebook)
+data/*.zip
+data/raw/
