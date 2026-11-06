@@ -2,7 +2,7 @@
 
 > **Status:** template. Filled in during the event (Nov 14-15, 2026). Every number below must come from actually running `notebooks/main.ipynb`.
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/GITHUB_USER/REPO_NAME/blob/main/notebooks/main.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Brandozerd/veritas-climate-hackathon/blob/main/notebooks/main.ipynb)
 
 ## Summary
 
@@ -18,8 +18,8 @@
 ### Option B: On your own computer
 
 ```bash
-git clone https://github.com/GITHUB_USER/REPO_NAME.git
-cd REPO_NAME
+git clone https://github.com/Brandozerd/veritas-climate-hackathon.git
+cd veritas-climate-hackathon
 pip install -r requirements.txt
 jupyter notebook notebooks/main.ipynb
 ```
