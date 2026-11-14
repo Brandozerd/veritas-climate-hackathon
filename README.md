@@ -51,7 +51,7 @@ The Colab badge above opens the same notebook. Its first cell downloads the rest
 
 ## What you should see
 
-`python run.py` takes about a minute. It prints each step's results and then starts the app:
+`python run.py` takes under a minute. It prints each step's results and then starts the app:
 
 1. The data: 11,639 days of Philadelphia weather since 1995, and a table of danger days per year.
 2. Which wind directions bring dirtier air.
@@ -74,6 +74,8 @@ Every number here was printed by `notebooks/main.ipynb` with the versions in `re
 | **Recess Ready** | **56** | **14** | 27 | **0.85** |
 
 Recess Ready caught 9 more danger days for 2 more false alarms.
+
+![The app's results section, with the same numbers](docs/app-results.png)
 
 ### By danger
 
