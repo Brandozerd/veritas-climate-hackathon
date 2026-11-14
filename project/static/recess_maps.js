@@ -76,9 +76,9 @@
   // Draws pins and the wind path into `layer` (a group we clear when the date changes)
   function drawClose(map, layer, c, first) {
     const home = L.divIcon({ className: "rr-pin", iconSize: [52, 64], iconAnchor: [26, 64],
-      html: '<span class="pulse"></span><span class="avatar">🏫</span>' });
+      html: '<span class="pulse"></span><span class="avatar"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10l7-5 7 5v11"/><path d="M10 21v-5h4v5"/><path d="M12 5V2l3 1-3 1"/></svg></span>' });
     const up = L.divIcon({ className: "rr-pin", iconSize: [34, 34], iconAnchor: [17, 17],
-      html: '<span class="up-dot">🌬️</span>' });
+      html: '<span class="up-dot"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#0F2A43" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10a3 3 0 1 0-3-3"/><path d="M3 12h15a3 3 0 1 1-3 3"/><path d="M3 16h7"/></svg></span>' });
     L.polyline([[c.up_lat, c.up_lon], [c.lat, c.lon]],
       { color: "#C77C00", weight: 5, dashArray: "12 12", lineCap: "round", className: "rr-flow" }).addTo(layer);
     L.marker([c.up_lat, c.up_lon], { icon: up }).addTo(layer).bindTooltip("Air comes from here", { direction: "top", offset: [0, -16] });
