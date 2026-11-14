@@ -41,7 +41,7 @@
     return "s4";
   }
 
-  function addArrows(map, winds) {
+  function addArrows(layer, winds) {
     for (const w of winds) {
       const speed = Math.hypot(w.u, w.v);
       const rot = (Math.atan2(w.u, w.v) * 180) / Math.PI;     // 0 = toward north, 90 = toward east
@@ -53,7 +53,7 @@
               `<i class="wa-line"></i><i class="wa-head"></i><i class="wa-dot"></i></div>`,
       });
       L.marker([w.lat, w.lon], { icon, zIndexOffset: -1000, keyboard: false })
-        .addTo(map).bindTooltip(`Wind from the ${w.from}, ${w.speed} km/h`, { direction: "top", offset: [0, -24] });
+        .addTo(layer).bindTooltip(`Wind from the ${w.from}, ${w.speed} km/h`, { direction: "top", offset: [0, -24] });
     }
   }
 
@@ -73,20 +73,22 @@
   }
 
   // ---------- The close-up "Life360" map ----------
-  function closeMap(map, c) {
+  // Draws pins and the wind path into `layer` (a group we clear when the date changes)
+  function drawClose(map, layer, c, first) {
     const home = L.divIcon({ className: "rr-pin", iconSize: [52, 64], iconAnchor: [26, 64],
       html: '<span class="pulse"></span><span class="avatar">🏫</span>' });
     const up = L.divIcon({ className: "rr-pin", iconSize: [34, 34], iconAnchor: [17, 17],
       html: '<span class="up-dot">🌬️</span>' });
     L.polyline([[c.up_lat, c.up_lon], [c.lat, c.lon]],
-      { color: "#C77C00", weight: 5, dashArray: "12 12", lineCap: "round", className: "rr-flow" }).addTo(map);
-    L.marker([c.up_lat, c.up_lon], { icon: up }).addTo(map).bindTooltip("Air comes from here", { direction: "top", offset: [0, -16] });
-    L.marker([c.lat, c.lon], { icon: home }).addTo(map).bindTooltip("Our data point (Center City)", { direction: "top", offset: [0, -64] });
-    map.fitBounds([[c.up_lat, c.up_lon], [c.lat, c.lon]], { padding: [70, 70], maxZoom: 12 });
+      { color: "#C77C00", weight: 5, dashArray: "12 12", lineCap: "round", className: "rr-flow" }).addTo(layer);
+    L.marker([c.up_lat, c.up_lon], { icon: up }).addTo(layer).bindTooltip("Air comes from here", { direction: "top", offset: [0, -16] });
+    L.marker([c.lat, c.lon], { icon: home }).addTo(layer).bindTooltip("Our data point (Center City)", { direction: "top", offset: [0, -64] });
+    if (first) map.fitBounds([[c.up_lat, c.up_lon], [c.lat, c.lon]], { padding: [70, 70], maxZoom: 12 });
   }
 
   // ---------- The regional danger chart ----------
-  function regionMap(map, c, uid) {
+  function setupRegion(map, c, uid) {
+    // Runs once: set the view and add the striped patterns used for "possible" dangers
     map.fitBounds(c.bounds, { padding: [10, 10] });   // set the view first; Leaflet draws layers only after that
     const svg = L.svg({ padding: 0.5 });
     map.addLayer(svg);
@@ -97,52 +99,105 @@
         <rect width="5" height="14" fill="${color}"/></pattern>`;
     }
     svg._container.prepend(defs);
+    L.circleMarker([c.lat, c.lon], { radius: 8, color: "#fff", weight: 3, fillColor: "#0F2A43", fillOpacity: 1 })
+      .addTo(map).bindTooltip("Philadelphia", { permanent: true, direction: "right", className: "rr-city" });
+    return svg;
+  }
+
+  function drawRegion(layer, c, uid, svg) {
     for (const cell of c.cells) {
       const r = L.rectangle([[cell.s, cell.w], [cell.n, cell.e]],
-        { renderer: svg, stroke: false, fillColor: cell.color, fillOpacity: cell.striped ? 0.85 : 0.55 }).addTo(map);
+        { renderer: svg, stroke: false, fillColor: cell.color, fillOpacity: cell.striped ? 0.85 : 0.55 }).addTo(layer);
       if (cell.striped) r._path.setAttribute("fill", `url(#${uid}-${cell.name})`);
       r.bindTooltip(`${cell.label}: ${cell.pct}% chance`, { sticky: true });
     }
-    L.circleMarker([c.lat, c.lon], { radius: 8, color: "#fff", weight: 3, fillColor: "#0F2A43", fillOpacity: 1 })
-      .addTo(map).bindTooltip("Philadelphia", { permanent: true, direction: "right", className: "rr-city" });
   }
 
+  // ---------- Build each map ONCE, then reuse it ----------
+  // When a new date is picked, the app sends new HTML. Instead of making a brand-new map (slow:
+  // new map pictures, new everything), we move the existing map into the new spot and only
+  // swap the pins, danger areas and arrows. The map pictures stay loaded and the zoom is kept.
+  // (When the date changes, the app reuses the same box and clears what's inside it. We keep
+  // the map in our own inner box and put it back whenever it goes missing. The box must start
+  // empty: if it had its own placeholder, the app would turn our map INTO that placeholder.)
+  const saved = {};      // kind ("close" or "region") -> { el, map, layer, svg, uid }
   let counter = 0;
+
+  function draw(m, c, first) {
+    m.layer.clearLayers();
+    m.el.querySelector(".rr-problem")?.remove();
+    try {
+      if (c.kind === "close") drawClose(m.map, m.layer, c, first); else drawRegion(m.layer, c, m.uid, m.svg);
+      addArrows(m.layer, c.winds);
+      if (!c.winds.length) problem(m.el, "No regional weather data for this date (the newest days can be missing). Try an earlier date.");
+    } catch (err) {
+      problem(m.el, "Something went wrong drawing the map: " + err.message);
+      console.error(err);
+    }
+  }
+
   function build(el) {
-    if (el.dataset.ready) return;
-    el.dataset.ready = "1";
+    const text = el.dataset.config;
+    const kind = el.classList.contains("region") ? "region" : "close";
+    const m0 = saved[kind];
+    // Skip if this box already shows this exact data with the map inside it
+    if (el._shown === text && m0 && el.contains(m0.inner)) return;
+    el._shown = text;
     let c;
-    try { c = JSON.parse(el.dataset.config); }
+    try { c = JSON.parse(text); }
     catch (err) { return problem(el, "The map's data couldn't be read: " + err.message); }
+    if (!window.L && !el.querySelector(".rr-loading")) {     // show a note while the map library loads
+      const note = document.createElement("div");
+      note.className = "rr-loading"; note.textContent = "Loading map…";
+      el.appendChild(note);
+    }
     whenReady(el, () => {
       el.querySelector(".rr-loading")?.remove();
-      const map = L.map(el, { zoomSnap: 0.5, scrollWheelZoom: true, zoomControl: false });
+      const old = saved[c.kind];
+      if (old) {                                   // reuse: put the existing map back inside the box
+        if (!el.contains(old.inner)) el.appendChild(old.inner);
+        old.el = el;                               // messages go to this box
+        old.map.invalidateSize();
+        draw(old, c, false);
+        return;
+      }
+      // The map lives in an inner box, so we can put it back if the app clears the outer box
+      const inner = document.createElement("div");
+      inner.className = "rrmap-inner";
+      el.appendChild(inner);
+      const map = L.map(inner, { zoomSnap: 0.5, scrollWheelZoom: true, zoomControl: false });
       L.control.zoom({ position: "topright" }).addTo(map);
       let loaded = 0, failed = 0;
+      const m = { el, inner, map, layer: null, uid: "rr" + (++counter) };
       L.tileLayer(TILES, { attribution: CREDIT, maxZoom: 18 })
         .on("tileload", () => loaded++)
         .on("tileerror", () => {
           failed++;
-          if (failed >= 3 && loaded === 0) problem(el, "Map pictures from OpenStreetMap were blocked by this network or browser. " +
+          if (failed >= 3 && loaded === 0) problem(m.el, "Map pictures from OpenStreetMap were blocked by this network or browser. " +
             "Pins, danger areas and wind arrows still work.");
         })
         .addTo(map);
-      try {
-        if (c.kind === "close") closeMap(map, c); else regionMap(map, c, "rr" + (++counter));
-        addArrows(map, c.winds);
-      } catch (err) {
-        problem(el, "Something went wrong drawing the map: " + err.message);
-        console.error(err);
-      }
+      m.layer = L.layerGroup().addTo(map);
+      if (c.kind === "region") m.svg = setupRegion(map, c, m.uid);
+      saved[c.kind] = m;
+      draw(m, c, true);
       setTimeout(() => map.invalidateSize(), 250);   // fix size if the page moved while loading
     });
   }
 
-  // Build every map on the page, now and whenever the app shows a new date
+  // Check every map box, now and whenever the app changes the page (for example, a new date).
+  // The app may reuse the same box and just change its data, so we compare the data each time.
+  let pending = false;
   const scan = () => {
-    document.querySelectorAll(".rrmap:not([data-ready])").forEach(build);
-    document.querySelectorAll("[data-count]:not([data-counted])").forEach(countUp);
+    if (pending) return;
+    pending = true;
+    requestAnimationFrame(() => {      // wait for the app to finish its changes, then check once
+      pending = false;
+      document.querySelectorAll(".rrmap").forEach(build);
+      document.querySelectorAll("[data-count]:not([data-counted])").forEach(countUp);
+    });
   };
-  new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
+  new MutationObserver(scan).observe(document.documentElement,
+    { childList: true, subtree: true, attributes: true, attributeFilter: ["data-config", "data-count"] });
   document.addEventListener("DOMContentLoaded", scan);
 })();
