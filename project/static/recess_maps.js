@@ -13,9 +13,22 @@
   const CREDIT = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
   const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // Wait until Leaflet has loaded
-  function whenReady(fn) {
-    if (window.L) fn(); else setTimeout(() => whenReady(fn), 100);
+  // Show a plain-English problem message inside a map box
+  function problem(el, text) {
+    el.querySelector(".rr-loading")?.remove();
+    let note = el.querySelector(".rr-problem");
+    if (!note) { note = document.createElement("div"); note.className = "rr-problem"; el.appendChild(note); }
+    note.textContent = text;
+  }
+
+  // Wait until Leaflet has loaded (give up after 10 seconds and say why)
+  function whenReady(el, fn, waited = 0) {
+    if (window.L) return fn();
+    if (waited > 10000) {
+      return problem(el, "The map library (Leaflet) didn't load, so the map can't be drawn. " +
+        "Try refreshing the page. If it keeps happening, check that project/static/leaflet/leaflet.js exists.");
+    }
+    setTimeout(() => whenReady(el, fn, waited + 100), 100);
   }
 
   // ---------- Wind arrows ----------
@@ -98,13 +111,29 @@
   function build(el) {
     if (el.dataset.ready) return;
     el.dataset.ready = "1";
-    const c = JSON.parse(el.dataset.config);
-    whenReady(() => {
+    let c;
+    try { c = JSON.parse(el.dataset.config); }
+    catch (err) { return problem(el, "The map's data couldn't be read: " + err.message); }
+    whenReady(el, () => {
+      el.querySelector(".rr-loading")?.remove();
       const map = L.map(el, { zoomSnap: 0.5, scrollWheelZoom: true, zoomControl: false });
       L.control.zoom({ position: "topright" }).addTo(map);
-      L.tileLayer(TILES, { attribution: CREDIT, maxZoom: 18 }).addTo(map);
-      if (c.kind === "close") closeMap(map, c); else regionMap(map, c, "rr" + (++counter));
-      addArrows(map, c.winds);
+      let loaded = 0, failed = 0;
+      L.tileLayer(TILES, { attribution: CREDIT, maxZoom: 18 })
+        .on("tileload", () => loaded++)
+        .on("tileerror", () => {
+          failed++;
+          if (failed >= 3 && loaded === 0) problem(el, "Map pictures from OpenStreetMap were blocked by this network or browser. " +
+            "Pins, danger areas and wind arrows still work.");
+        })
+        .addTo(map);
+      try {
+        if (c.kind === "close") closeMap(map, c); else regionMap(map, c, "rr" + (++counter));
+        addArrows(map, c.winds);
+      } catch (err) {
+        problem(el, "Something went wrong drawing the map: " + err.message);
+        console.error(err);
+      }
       setTimeout(() => map.invalidateSize(), 250);   // fix size if the page moved while loading
     });
   }
