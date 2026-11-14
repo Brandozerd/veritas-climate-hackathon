@@ -1,8 +1,11 @@
-# Pin exact versions at kickoff (match what Colab uses), e.g. pandas==2.2.2
-# Run: pip freeze | grep -iE "pandas|scikit-learn|matplotlib|gradio|requests"
-pandas
-scikit-learn
-matplotlib
-gradio
-requests
-pillow
+# Exact versions we tested with (Python 3.11). Install with: pip install -r requirements.txt
+gradio==6.32.0          # the app
+pandas==3.1.1           # data tables
+numpy==2.4.6            # math on arrays
+scikit-learn==1.9.1     # the random forest models
+scipy==1.17.1           # smoothing for the regional alert map
+matplotlib==3.11.2      # charts, and outlines for the regional alert map
+requests==2.34.2        # downloading data (only needed if data/ is deleted)
+notebook==7.6.5         # Jupyter, to open notebooks/main.ipynb
+nbconvert==7.17.2       # runs the notebook from the command line
+ipykernel==7.4.0        # lets Jupyter run Python

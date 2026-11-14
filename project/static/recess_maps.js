@@ -3,7 +3,7 @@
 // and OpenStreetMap map tiles (© OpenStreetMap contributors).
 //
 // How it works:
-// 1. Python puts each map's data (pins, danger areas, winds) into a <div class="rrmap" data-config="...">.
+// 1. Python puts each map's data (pins, alert areas, winds) into a <div class="rrmap" data-config="...">.
 // 2. This script watches the page. When a new map <div> appears, it builds a Leaflet map inside it.
 // 3. Wind: we know today's wind at 35 places, so each place gets an animated arrow.
 // 4. Numbers marked with data-count count up from 0 when a new day is shown.
@@ -53,7 +53,7 @@
               `<i class="wa-line"></i><i class="wa-head"></i><i class="wa-dot"></i></div>`,
       });
       L.marker([w.lat, w.lon], { icon, zIndexOffset: -1000, keyboard: false })
-        .addTo(layer).bindTooltip(`Wind from the ${w.from}, ${w.speed} km/h`, { direction: "top", offset: [0, -24] });
+        .addTo(layer).bindTooltip(`Wind from the ${w.from}, ${w.mph} mph`, { direction: "top", offset: [0, -24] });
     }
   }
 
@@ -105,17 +105,16 @@
   }
 
   function drawRegion(layer, c, uid, svg) {
-    // Smooth danger areas: striped = "possible", solid = "likely" (drawn on top), each with an outline
-    const order = { possible: 0, likely: 1 };
-    for (const a of [...c.areas].sort((x, y) => order[x.level] - order[y.level])) {
-      const likely = a.level === "likely";
+    // Smooth alert areas: striped = alert, solid = strong alert (drawn on top), each with an outline
+    for (const a of [...c.areas].sort((x, y) => x.strong - y.strong)) {
+      const likely = a.strong;
       const area = L.polygon(a.rings, {
         renderer: svg, fillRule: "evenodd", color: a.color, weight: likely ? 2.5 : 2,
         dashArray: likely ? null : "6 5", fillColor: a.color, fillOpacity: likely ? 0.45 : 0.9,
         className: "rr-area",
       }).addTo(layer);
       if (!likely) area._path.setAttribute("fill", `url(#${uid}-${a.name})`);
-      area.bindTooltip(`${a.label}: ${a.level}, up to ${a.pct}% chance`, { sticky: true });
+      area.bindTooltip(a.tip, { sticky: true });
       const stripes = () => { if (!likely) area._path.setAttribute("fill", `url(#${uid}-${a.name})`); };
       // Hover: thicker outline (Leaflet resets the fill when restyling, so put the stripes back)
       area.on("mouseover", () => { area.setStyle({ weight: 4 }); stripes(); })

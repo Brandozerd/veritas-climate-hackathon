@@ -6,5 +6,6 @@
       "extensions": ["ms-python.python", "ms-toolsai.jupyter"]
     }
   },
-  "postCreateCommand": "pip install -r requirements.txt ipykernel"
+  "forwardPorts": [7860],
+  "postCreateCommand": "pip install -r requirements.txt"
 }

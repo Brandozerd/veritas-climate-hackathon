@@ -83,11 +83,13 @@ Target structure:
 
 ```
 README.md              <- what it is, how to run it, results, credits
+run.py                 <- runs the notebook's code and starts the app (python run.py)
 requirements.txt       <- every library, with pinned versions
 CLAUDE.md              <- this file
-notebooks/main.ipynb   <- the main notebook (must work in Colab with "Run all")
-data/                  <- small data files, or a script that downloads them
-project/               <- any helper .py files for the real project
+notebooks/main.ipynb   <- the main notebook, saved with its outputs
+data/                  <- saved data files (the notebook re-downloads them if deleted)
+project/static/        <- our map script and the Leaflet library
+docs/                  <- screenshots and the teach-back guide
 practice/              <- practice only, never reused
 ```
 
@@ -103,19 +105,26 @@ practice/              <- practice only, never reused
 - Data: either include a small file in `data/`, or download it automatically in the notebook. Judges should never have to find files themselves.
 - Before submitting, a teammate clones the repo fresh and follows only the README. If they get stuck, fix it.
 
-## 7. Our practice project (before kickoff only)
+## 7. Our real project: Recess Ready (Philadelphia)
 
-**Bad-Air-Day Forecaster: Global Cities**
+**What it is:** a planning tool for principals, teachers and school staff. Each evening it says whether tomorrow's recess needs a change of plan, and why. The audience is adult school staff: write for them, never for students, and never collect personal information.
 
-- Predict whether tomorrow's air quality will be unhealthy in ~15-20 major cities on different continents, using today's weather and air quality.
-- Data: Open-Meteo free historical weather + air quality APIs (same format for every city). Start with ONE city end to end, then add more.
-- Use ONE definition of "unhealthy" for every city (a PM2.5 threshold based on US AQI or WHO guidelines), and cite it.
-- Baseline: "tomorrow = today." Model: random forest from scikit-learn.
-- Fairness: accuracy per city and per region, with honest failures.
-- Long-term trends: bad-air days per year per city, labeled clearly as historical TRENDS, not predictions.
-- Demo: pick a city and date, get a prediction plus a short alert for schools and families, with a "prototype, not official guidance" disclaimer.
+**How it works (all in `notebooks/main.ipynb`, Steps 1-15):**
+- Data: Open-Meteo daily weather since 1995 and air quality since August 2022, saved in `data/`. No API keys.
+- Seven dangers: too hot, too cold, heavy rain, dangerous wind, heavy snow, smoke and particles, ozone smog. Thunderstorms and ice were dropped because the data never records them.
+- Baseline: "tomorrow will be like today."
+- Model: two random forests (weather dangers on 30 years, air dangers on 2022 onward), with trend inputs.
+- Each danger has its own alert line, chosen on the 2024-25 practice year with `MISS_COST = 2`. Never tune anything on the test period (September 2025 to November 2026).
+- Checks: by season, against the real PHL airport station, and across 35 places in the region.
+- App: Gradio, with maps drawn by `project/static/recess_maps.js` (Leaflet + OpenStreetMap). It shows US units and calls the model's output a "risk score," not a percent chance.
 
-At kickoff, we adapt this shape (predict, compare to baseline, check fairness, demo an alert) to whatever the real brief asks for.
+**Results we report (from the saved notebook):** Recess Ready caught 56 of 70 danger days, missed 14, with 27 false alarms (accuracy 0.85). The baseline caught 47, missed 23, with 25 false alarms (0.82). If the notebook's output changes, update the README, the write-up and the video to match.
+
+**Known limits to say out loud:** no reliable alerts for heavy rain, wind, snow or smoke; thunderstorms and ice are invisible; one reading for the whole city; air data is a model estimate; holidays ignored; scores are not percent chances.
+
+**Before changing the model:** re-run the notebook, save it with outputs (`RECESS_SKIP_APP=1 jupyter nbconvert --to notebook --execute --inplace main.ipynb` from `notebooks/`), and update every number in the README.
+
+The practice project (a global bad-air-day forecaster) was only for learning before kickoff. Nothing from it is used.
 
 ## 8. Brandon's jobs (video + demo)
 
