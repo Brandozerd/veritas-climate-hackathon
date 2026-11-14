@@ -25,3 +25,4 @@ Thumbs.db
 # Big data files (keep small ones in data/; download big ones in the notebook)
 data/*.zip
 data/raw/
+confusion_matrix.png
