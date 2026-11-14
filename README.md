@@ -20,6 +20,8 @@ A principal or teacher deciding, the evening before, whether recess and PE go ou
 | **Outdoor recess, with limits** | Alert for air quality only | Stay outdoors with lighter activity; students with asthma follow their action plans. This follows the EPA's guidance for schools at the orange air-quality level. |
 | **Outdoor recess as usual** | No alerts | No change |
 
+A **Copy message for staff** button copies a ready-to-paste message for the staff group chat, for example: *"Recess Ready check for Thu, Dec 4: INDOOR RECESS. Alert for too cold (wind chill of 20°F or colder)."*
+
 It is built for adult school staff. It collects no personal information and has no accounts.
 
 ## How to run it

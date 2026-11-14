@@ -185,6 +185,24 @@
     });
   }
 
+  // ---------- "Copy message for staff" button ----------
+  // Copies a short message the recess lead can paste into the staff group chat
+  document.addEventListener("click", async (e) => {
+    const button = e.target.closest(".share");
+    if (!button) return;
+    const text = button.dataset.share;
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {                      // older browsers: copy through a hidden text box
+      const box = document.createElement("textarea");
+      box.value = text; document.body.appendChild(box); box.select();
+      document.execCommand("copy"); box.remove();
+    }
+    button.textContent = "Copied. Paste it into your staff chat.";
+    button.classList.add("done");
+    setTimeout(() => { button.textContent = "Copy message for staff"; button.classList.remove("done"); }, 2500);
+  });
+
   // Check every map box, now and whenever the app changes the page (for example, a new date).
   // The app may reuse the same box and just change its data, so we compare the data each time.
   let pending = false;
