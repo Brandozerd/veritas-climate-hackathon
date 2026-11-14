@@ -105,11 +105,21 @@
   }
 
   function drawRegion(layer, c, uid, svg) {
-    for (const cell of c.cells) {
-      const r = L.rectangle([[cell.s, cell.w], [cell.n, cell.e]],
-        { renderer: svg, stroke: false, fillColor: cell.color, fillOpacity: cell.striped ? 0.85 : 0.55 }).addTo(layer);
-      if (cell.striped) r._path.setAttribute("fill", `url(#${uid}-${cell.name})`);
-      r.bindTooltip(`${cell.label}: ${cell.pct}% chance`, { sticky: true });
+    // Smooth danger areas: striped = "possible", solid = "likely" (drawn on top), each with an outline
+    const order = { possible: 0, likely: 1 };
+    for (const a of [...c.areas].sort((x, y) => order[x.level] - order[y.level])) {
+      const likely = a.level === "likely";
+      const area = L.polygon(a.rings, {
+        renderer: svg, fillRule: "evenodd", color: a.color, weight: likely ? 2.5 : 2,
+        dashArray: likely ? null : "6 5", fillColor: a.color, fillOpacity: likely ? 0.45 : 0.9,
+        className: "rr-area",
+      }).addTo(layer);
+      if (!likely) area._path.setAttribute("fill", `url(#${uid}-${a.name})`);
+      area.bindTooltip(`${a.label}: ${a.level}, up to ${a.pct}% chance`, { sticky: true });
+      const stripes = () => { if (!likely) area._path.setAttribute("fill", `url(#${uid}-${a.name})`); };
+      // Hover: thicker outline (Leaflet resets the fill when restyling, so put the stripes back)
+      area.on("mouseover", () => { area.setStyle({ weight: 4 }); stripes(); })
+          .on("mouseout", () => { area.setStyle({ weight: likely ? 2.5 : 2 }); stripes(); });
     }
   }
 
