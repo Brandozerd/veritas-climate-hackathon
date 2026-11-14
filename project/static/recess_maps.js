@@ -178,12 +178,19 @@
       L.control.zoom({ position: "topright" }).addTo(map);
       let loaded = 0, failed = 0;
       const m = { el, inner, map, layer: null, uid: "rr" + (++counter) };
-      L.tileLayer(TILES, { attribution: CREDIT, maxZoom: 18 })
+      // 1) The map picture Python downloaded (works even if the browser can't load tiles)
+      const picture = (window.RR_PICTURES || {})[c.kind];
+      if (picture) {
+        L.imageOverlay(picture.url, picture.bounds, { attribution: CREDIT }).addTo(map);
+        map.setMaxBounds(L.latLngBounds(picture.bounds).pad(0.15));
+      }
+      // 2) Live tiles on top, sharper when you zoom in (if the browser is allowed to load them)
+      L.tileLayer(TILES, { attribution: picture ? "" : CREDIT, maxZoom: 18 })
         .on("tileload", () => loaded++)
         .on("tileerror", () => {
           failed++;
-          if (failed >= 3 && loaded === 0) problem(m.el, "Map pictures from OpenStreetMap were blocked by this network or browser. " +
-            "Pins, danger areas and wind arrows still work.");
+          if (!picture && failed >= 3 && loaded === 0) problem(m.el, "Map pictures from OpenStreetMap were blocked by this network or browser. " +
+            "Pins, alert areas and wind arrows still work.");
         })
         .addTo(map);
       m.layer = L.layerGroup().addTo(map);
