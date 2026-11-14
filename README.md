@@ -188,7 +188,7 @@ RECESS_SKIP_APP=1 jupyter nbconvert --to notebook --execute --inplace main.ipynb
 ## AI tools used
 
 - **Claude Code** (Anthropic's AI coding assistant) wrote most of the code and this README from our instructions. We chose the idea, the user, the dangers and the "a miss costs double" rule; ran every version ourselves; and reported the results that came out, including the ones that failed.
-- Inside Claude Code we used these add-on skills: frontend-design, impeccable and apple-design (visual design guidance), webapp-testing (browser screenshots to check the app), llm-council (to argue over project ideas), and find-skill (to find the others).
+- Inside Claude Code we used these add-on skills: frontend-design, impeccable, apple-design and anti-ui-slop (visual design guidance), webapp-testing (browser screenshots to check the app), llm-council (to argue over project ideas), and find-skill (to find the others).
 - *Team: add any other AI tool you used here, for example GitHub Copilot or ChatGPT.*
 
 ## Team

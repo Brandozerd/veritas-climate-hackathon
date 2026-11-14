@@ -1,4 +1,4 @@
-// Recess Ready: interactive maps (zoom, pan), animated wind arrows, and counting numbers.
+// Recess Ready: interactive maps (zoom, pan) and animated wind arrows.
 // Written by our team during the hackathon. Uses Leaflet 1.9.4 (BSD-2 license, see leaflet/LICENSE)
 // and OpenStreetMap map tiles (© OpenStreetMap contributors).
 //
@@ -6,7 +6,6 @@
 // 1. Python puts each map's data (pins, alert areas, winds) into a <div class="rrmap" data-config="...">.
 // 2. This script watches the page. When a new map <div> appears, it builds a Leaflet map inside it.
 // 3. Wind: we know today's wind at 35 places, so each place gets an animated arrow.
-// 4. Numbers marked with data-count count up from 0 when a new day is shown.
 
 (function () {
   const TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -55,21 +54,6 @@
       L.marker([w.lat, w.lon], { icon, zIndexOffset: -1000, keyboard: false })
         .addTo(layer).bindTooltip(`Wind from the ${w.from}, ${w.mph} mph`, { direction: "top", offset: [0, -24] });
     }
-  }
-
-  // ---------- Numbers that count up when a new day loads ----------
-  function countUp(el) {
-    if (el.dataset.counted) return;
-    el.dataset.counted = "1";
-    const target = parseFloat(el.dataset.count), dec = parseInt(el.dataset.dec || "0", 10);
-    if (calm || isNaN(target)) return;
-    const start = performance.now(), ms = 900;
-    const tick = (now) => {
-      const t = Math.min(1, (now - start) / ms), eased = 1 - Math.pow(1 - t, 3);
-      el.textContent = (target * eased).toFixed(dec);
-      if (t < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
   }
 
   // ---------- The close-up "Life360" map ----------
@@ -210,10 +194,9 @@
     requestAnimationFrame(() => {      // wait for the app to finish its changes, then check once
       pending = false;
       document.querySelectorAll(".rrmap").forEach(build);
-      document.querySelectorAll("[data-count]:not([data-counted])").forEach(countUp);
-    });
+      });
   };
   new MutationObserver(scan).observe(document.documentElement,
-    { childList: true, subtree: true, attributes: true, attributeFilter: ["data-config", "data-count"] });
+    { childList: true, subtree: true, attributes: true, attributeFilter: ["data-config"] });
   document.addEventListener("DOMContentLoaded", scan);
 })();
