@@ -26,3 +26,4 @@ Thumbs.db
 data/*.zip
 data/raw/
 confusion_matrix.png
+pollution_by_wind.png
