@@ -278,3 +278,20 @@
     { childList: true, subtree: true, attributes: true, attributeFilter: ["data-config"] });
   document.addEventListener("DOMContentLoaded", scan);
 })();
+
+// Countdown to the next forecast check (the app re-checks every 10 minutes while the page is open)
+(function () {
+  function tick() {
+    document.querySelectorAll(".rr-next").forEach(function (el) {
+      var left = Math.round((Number(el.dataset.next) - Date.now()) / 1000);
+      var last = el.dataset.last || "";
+      if (left > 0) {
+        var m = Math.floor(left / 60), s = String(left % 60).padStart(2, "0");
+        el.textContent = "Next forecast check in " + m + ":" + s + " · " + last;
+      } else {
+        el.textContent = "Checking for a new forecast… · " + last;
+      }
+    });
+  }
+  setInterval(tick, 1000);
+})();
