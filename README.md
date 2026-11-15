@@ -146,7 +146,21 @@ The paired tests compare one school day at a time ("was the any-danger call righ
 
 The notebook repeats the comparison on the 2024-25 practice year, using the practice-year model from Step 9 (trained only before September 2024). Its alert lines were chosen on that year, which favors our model.
 
-*Team: paste the practice-year table from Step 16 here after running the notebook. Report it whichever way it comes out.*
+216 school days, 52 danger days:
+
+| Method | Caught | Missed | False alarms | Precision | Recall | F1 | Accuracy |
+|---|---|---|---|---|---|---|---|
+| Recess Ready (hybrid) | 46 | 6 | 12 | 0.79 | 0.88 | 0.84 | 0.92 |
+| Our model alone | 44 | 8 | 21 | 0.68 | 0.85 | 0.75 | 0.87 |
+| Forecast + danger lines (weather only) | 44 | 8 | 9 | 0.83 | 0.85 | 0.84 | 0.92 |
+| Baseline: "like today" | 35 | 17 | 18 | 0.66 | 0.67 | 0.67 | 0.84 |
+
+- **Weather dangers only:** the forecast caught 43 of 48 with 10 false alarms. Our model caught 41 with 21, even with its alert lines chosen on this year. "Like today" caught 32 with 19.
+- **Hybrid vs our model alone:** 16 days only the hybrid was right, 5 only our model, p = 0.027.
+
+**The main finding holds on a second period:** the forecast beats our model on weather dangers, and the hybrid beats our model alone. Here our model's air part did help a little (2 more danger days caught than the forecast alone, for 3 more false alarms), unlike on the test period.
+
+**Across both periods (486 school days), accuracy:** forecast + danger lines 0.92, Recess Ready 0.91, our model alone 0.86, "like today" 0.83.
 
 ### Does a "danger day" mean a dangerous recess?
 
