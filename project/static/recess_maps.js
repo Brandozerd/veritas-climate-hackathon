@@ -222,6 +222,22 @@
     if (pick) selectDay(pick.dataset.day);
   });
 
+  // ---------- Light / dark mode ----------
+  // Starts like the computer's setting; the moon/sun button switches it and the choice is remembered.
+  function setTheme(dark) {
+    document.documentElement.classList.toggle("rr-dark", dark);
+    try { localStorage.setItem("rr-theme", dark ? "dark" : "light"); } catch (err) { /* private window: just don't remember */ }
+  }
+  let savedTheme = null;
+  try { savedTheme = localStorage.getItem("rr-theme"); } catch (err) { /* ignore */ }
+  document.documentElement.classList.toggle("rr-dark",
+    savedTheme ? savedTheme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches);
+  document.addEventListener("click", (e) => {
+    if (e.target.closest(".theme-toggle")) setTheme(!document.documentElement.classList.contains("rr-dark"));
+    // Maps drawn while their tab was hidden need to measure their size again when the tab is shown
+    if (e.target.closest('[role="tab"]')) setTimeout(() => Object.values(saved).forEach(m => m.map.invalidateSize()), 120);
+  });
+
   // ---------- "Copy message for staff" button ----------
   // Copies a short message the recess lead can paste into the staff group chat
   document.addEventListener("click", async (e) => {

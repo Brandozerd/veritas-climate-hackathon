@@ -61,7 +61,9 @@ The Colab badge above opens the same notebook. Its first cell downloads the rest
 6. **The week ahead (live):** how long the download took, then each of the next 7 days with whether it's a school day and its alerts. This needs an internet connection; without one it says so and everything else still runs.
 7. `Running on local URL: http://127.0.0.1:7860` — the app.
 
-At the top of the app is **The week ahead**, made from live Open-Meteo weather and air quality:
+The app has two tabs, and a moon/sun button in the header switches between light and dark mode (it starts out matching your computer's setting).
+
+The **Week ahead** tab is made from live Open-Meteo weather and air quality:
 
 - **Seven day cards**, each with its call (indoor, with limits, outdoor, or no school) and the forecast feels-like high and low. It opens on the next school day.
 - **Click a day** to see its call, plan, risk scores, staff message, the school day hour by hour (lunch recess highlighted, thunderstorms flagged), and a close-up wind map of Philadelphia. Switching days is instant: everything is already on the page.
@@ -69,7 +71,7 @@ At the top of the app is **The week ahead**, made from live Open-Meteo weather a
 - **Week graph:** feels-like temperature and chance of rain, hour by hour for 7 days, with the 20 °F and 90 °F danger lines and school hours shaded.
 - **Refresh the forecast** downloads the latest data in a few seconds (the downloads run at the same time). Data less than 10 minutes old is reused instantly.
 
-Below that, **How well it works** shows the test-period results.
+The **How well it works** tab shows the test-period results and how the model works.
 
 ## Results
 
