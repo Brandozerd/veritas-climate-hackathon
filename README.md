@@ -83,7 +83,7 @@ The Colab badge above opens the same notebook. Its first cell downloads the rest
 3. A first model that fails (192 false alarms), then the fix.
 4. `Model (alert line per danger): accuracy 0.85 | caught 56 | missed 14 | false alarms 27` (our model alone), then a shuffle test of which inputs matter.
 5. Checks by season, against the real airport weather station, an hour-by-hour example from the station, across 35 places in the region, and on old forecasts made up to 7 days ahead. Then every method on the same test days, with precision, recall, F1 and paired tests: `Hybrid (what the app uses)  59  11  13 ...`.
-6. **The week ahead (live):** how long the download took, then each of the next 7 days with whether it's a school day and its alerts. This needs an internet connection; without one it says so and everything else still runs.
+6. **The week ahead (live):** how long the download took, then each of the next 7 days with whether it's a school day and its alerts. This needs an internet connection. Each successful download is saved to `data/live_forecast_saved.json`. If a later download fails (no internet, or the free weather service is busy), the app shows that saved week instead, labeled **"Saved forecast from [date], not live"** with a warning, so the tab is never empty. With no saved copy and no internet, it says so, and everything else still runs.
 7. `Running on local URL: http://127.0.0.1:7860` — the app.
 
 The app has three tabs. It opens in dark mode; the sun/moon switch in the header changes it.
