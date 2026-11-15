@@ -6,7 +6,7 @@
 
 **What's new.** Not another forecast: a *decision* for one user, made the night before, with its reason. And we tested our ML head-to-head against the weather forecast itself.
 
-**What we built.** A planning tool for adult school staff. Each evening it gives one call for tomorrow (indoor recess, outdoor with limits, or outdoor as usual) and the reason, with each forecast number shown next to its danger line. It covers seven dangers: heat, cold, heavy rain, wind, snow, smoke and ozone. It also shows the week ahead and replays past days against real airport readings. No personal data.
+**What we built.** A planning tool for adult school staff. Each evening it gives one call for tomorrow (indoor recess, outdoor with limits, or outdoor as usual) and the reason, with each forecast number shown next to its danger line. It covers seven dangers: heat, cold, heavy rain, wind, snow, smoke and ozone. It also shows the week ahead, re-checks the forecast every 10 minutes and flags any call that changes, and replays past days against real airport readings. No personal data.
 
 **Approach.** Free Open-Meteo data (weather since 1995, air since 2022). Two random forests (weather and air), each danger with its own alert line, tuned on the 2024-25 school year (a miss costs twice a false alarm). Baselines: "tomorrow like today," and the tougher one, the weather forecast checked against our lines. We split by time and tested once on Sep 2025 to Nov 2026: 270 school days, 70 with a danger.
 
