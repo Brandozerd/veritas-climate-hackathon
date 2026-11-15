@@ -12,7 +12,7 @@ We first built a machine-learning model for everything. When we tested it agains
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Brandozerd/veritas-climate-hackathon/blob/main/notebooks/main.ipynb)
 
-**Demo video (1:32):** [docs/recess_ready_video.mp4](docs/recess_ready_video.mp4) · **One-page write-up:** [docs/WRITEUP.md](docs/WRITEUP.md)
+**Demo video (1:30):** [docs/recess_ready_video.mp4](docs/recess_ready_video.mp4) · **One-page write-up:** [docs/WRITEUP.md](docs/WRITEUP.md)
 
 ## Results at a glance
 

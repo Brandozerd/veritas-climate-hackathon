@@ -90,18 +90,18 @@ Roles: **Brandon** drives the app and explains the model and results. **Write-up
 
 ---
 
-## Final video: AI voiceover script (1:32, `docs/recess_ready_video.mp4`)
+## Final video: AI voiceover script (1:30, `docs/recess_ready_video.mp4`)
 
 Word for word what the finished video says. The voice is an AI voice (Kokoro TTS). The pictures are flat animation in three colour fields (orange: the problem; off-white: the product; near-black: the test) plus light-mode screenshots of our app's Past days tab for Monday, January 26, 2026, a test-period day. Every number is from the saved notebook or that screen.
 
 | Time | Scene | Voiceover |
 |---|---|---|
 | 0:00 | The example | Sunday night, January twenty fifth. Tomorrow's low will feel like minus one degree. Every school in Philadelphia has to decide. Is recess safe? |
-| 0:09 | The dangers | Cold. Heat. Smog. Storms. |
+| 0:09 | The dangers | Cold... heat... smog... and storms. |
 | 0:14 | The problem | Most schools decide the morning of, by looking out the window. By then, there's no time to plan. |
 | 0:20 | Recess Ready | So we built Recess Ready. It makes the recess call the night before. And it explains why. |
 | 0:26 | The call | For that Monday, it said: plan indoor recess. The forecast low, minus one, crossed the twenty degree line. |
-| 0:34 | It was right | And it was right. At eleven A M, the airport station felt like ten degrees. |
+| 0:34 | It was right | And it was right. At recess, the airport station felt like ten degrees. |
 | 0:39 | The data | It learns from thirty years of Philadelphia weather, and air quality since twenty twenty two. All free, open data. |
 | 0:47 | How it works | It watches for seven dangers. Each one has its own alert line. A random forest scores the risk, and the weather forecast checks it. |
 | 0:55 | The test | We tested it on fourteen months it never saw. Two hundred seventy school days. Seventy danger days. |
