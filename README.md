@@ -117,7 +117,7 @@ It is better than the baseline in fall and winter and slightly worse in spring a
 
 ### What the model looks at
 
-We shuffled one input at a time on the test period and counted how much worse the alerts got (a "shuffle test," or permutation importance). For the weather dangers, the inputs that matter most are the **3-day average feels-like low** (accuracy drops 2.0 points when it's shuffled), the **time of year** (1.5) and the **north-south part of the wind direction** (1.4). For the air dangers, it's **fine particles (PM2.5)** (0.9). The drops are small because several inputs carry the same information (today's low, yesterday's low and the 3-day average), so they share the credit.
+We shuffled one input at a time on the test period and counted how much worse the alerts got (a "shuffle test," or permutation importance). For the weather dangers, the inputs that matter most are the **3-day average feels-like low** (accuracy drops 2.1 points when it's shuffled), the **north-south part of the wind direction** (1.9) and the **time of year** (1.6). For the air dangers, the top three are the **change in feels-like low since yesterday** (1.0), **fine particles (PM2.5)** (0.9) and the **air quality index** (0.7). The drops are small because several inputs carry the same information (today's low, yesterday's low and the 3-day average), so they share the credit.
 
 Scikit-learn's quick built-in ranking said wind direction (east-west part) mattered most. The shuffle test showed it barely matters. The built-in ranking over-credits inputs the trees split on often, so we report the shuffle test. Chart: `docs/feature_importance.png`.
 
