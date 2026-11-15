@@ -55,7 +55,7 @@ Two baselines. "Tomorrow will be like today" caught 47 of 70 danger days with 25
 Honestly, for this decision, our tests say you mostly don't. We started by believing ML would beat simple rules. We tested that against the strongest simple alternative, the weather forecast with our danger lines, and it lost on weather. We kept our model for air quality because there's no archive of old air forecasts to test against, but even there it didn't change a single call on the test period: all 6 ozone days it caught were already flagged for heat. Our contribution is the evaluation, not a claim that ML is always better. Next step: train a model that uses the forecast as an input, and test it on a fresh period.
 
 **"Didn't you overfit to your test set?"**
-Partly, yes, and we say so. We didn't tune the model or the alert lines on it, but we looked at test results while building, and we chose the hybrid after seeing the forecast comparison. So our test numbers are exploratory. Our git history shows exactly when each decision was made (README timeline). We also ran the comparison on the 2024-25 practice year, which we hadn't compared against the forecast. The finding held there: the forecast beat our model on weather (43 caught with 10 false alarms, vs 41 with 21), and the hybrid beat our model alone (p = 0.027).
+Partly, yes, and we say so. We didn't tune the model or the alert lines on it, but we looked at test results while building, and we chose the hybrid after seeing the forecast comparison. So our test numbers are exploratory. Our git history shows exactly when each decision was made (README timeline). We also ran a development-period check on the 2024-25 practice year (not independent: our alert lines were chosen there). The finding looked the same: the forecast beat our model on weather (43 caught with 10 false alarms, vs 41 with 21), and the hybrid beat our model alone (p = 0.027).
 
 **"Do your danger labels match a dangerous recess?"**
 Not exactly. "Too cold" uses the day's lowest feels-like, usually at dawn. At the airport during recess, only 15 of the 45 "too cold" days were actually at or below 20 °F; the typical recess value was about 23 °F. So our labels are cautious: they flag more days than recess-hour readings alone would.
@@ -89,6 +89,10 @@ First, fix the rare dangers: use tomorrow's weather forecast as an input, since 
 - **"Who wrote the code?"** An AI coding assistant wrote most of it from our instructions. We chose the problem, the user and the rules, ran every version, and can explain each step. (Then explain a step.)
 
 - **"My phone's weather app says something different."** Different source, and we show feels-like (wind chill and heat index), not the air temperature. Against the airport's real sensors, our data is typically 3-4 °F off and runs 2-3 °F colder on average. The day-before forecast is typically about 2 °F off. We report these numbers instead of hiding them.
+
+- **"If a free forecast with simple thresholds does as well, why use Recess Ready?"** Our tests don't show it predicts better than that, and we say so. What it adds is the school-specific part: the call and plan in plain words, the danger lines shown next to each number, the school calendar, after-school checks, and a record of past calls against what happened. Showing that this improves real decisions is the next step.
+- **"Your statistics assume each day is independent."** Right, and weather comes in streaks. Resampling whole weeks gives wider intervals (hybrid 0.72-0.91, forecast alone 0.76-0.92), and we say our day-level tests may overstate certainty.
+- **"Was the forecast really available the evening before?"** The archive stores the value forecast 24 hours before each hour, so the day's high and low were forecast by the afternoon or dawn before. Late-evening hours came after an 8 PM decision, which barely affects highs and lows.
 
 ## Before you submit
 

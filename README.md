@@ -2,7 +2,7 @@
 
 **Veritas AI International High School Hackathon 2026, Climate track**
 
-Recess Ready is a planning tool for principals, teachers and school staff in Philadelphia. Each evening it says whether **tomorrow's recess needs a change of plan**, and why: too hot, too cold, ozone smog, and more. It checks the weather forecast against danger lines for heat, cold, rain, wind and snow, and uses our machine-learning model for air quality. On 270 past school days, using the forecasts as they were issued, it caught **59 of 70** danger days with 13 false alarms. Our model alone caught 56 (27 false alarms); "tomorrow will be like today" caught 47 (25).
+**Our research question:** can machine learning improve next-day recess decisions beyond the weather forecast plus clear danger lines? **Our answer, from our tests: no.** Recess Ready is the tool we built along the way: a planning tool for principals, teachers and school staff in Philadelphia. Each evening it says whether **tomorrow's recess needs a change of plan**, and why: too hot, too cold, ozone smog, and more. It checks the weather forecast against danger lines for heat, cold, rain, wind and snow, and uses our machine-learning model for air quality. On 270 past school days, using the forecasts as they were issued, it caught **59 of 70** danger days with 13 false alarms. Our model alone caught 56 (27 false alarms); "tomorrow will be like today" caught 47 (25).
 
 We first built a machine-learning model for everything. When we tested it against the plain weather forecast, the forecast won. The app now uses the forecast for weather; our model's air-quality part didn't improve any call in testing either. Our main contribution is that honest evaluation, and every result is below, including the disappointing ones.
 
@@ -140,11 +140,13 @@ We kept our model for air in the app rather than make yet another change chosen 
 
 The hybrid and the forecast alone overlap almost completely: we can't tell them apart.
 
+Weather comes in streaks (a cold snap lasts days), so days aren't independent. Resampling whole weeks instead gives wider intervals: hybrid 0.72-0.91, forecast alone 0.76-0.92, our model 0.61-0.83, "like today" 0.53-0.76. **Our paired tests and day-level intervals don't fully account for this, so they may overstate certainty.**
+
 The paired tests compare one school day at a time ("was the any-danger call right?"). Hybrid vs our model: 220 days both right, 26 only the hybrid right, 9 only our model right, 15 both wrong. We ran 3 tests; the two hybrid comparisons still pass a stricter cutoff for multiple tests (0.05 / 3).
 
-### A check on a period we hadn't compared yet (2024-25 practice year)
+### A development-period check (2024-25 practice year)
 
-The notebook repeats the comparison on the 2024-25 practice year, using the practice-year model from Step 9 (trained only before September 2024). Its alert lines were chosen on that year, which favors our model.
+The notebook repeats the comparison on the 2024-25 practice year, using the practice-year model from Step 9 (trained only before September 2024). This is **not independent validation**: our model's alert lines were chosen on this year (which favors our model), and the year was used during development. It's a consistency check.
 
 216 school days, 52 danger days:
 
@@ -158,9 +160,9 @@ The notebook repeats the comparison on the 2024-25 practice year, using the prac
 - **Weather dangers only:** the forecast caught 43 of 48 with 10 false alarms. Our model caught 41 with 21, even with its alert lines chosen on this year. "Like today" caught 32 with 19.
 - **Hybrid vs our model alone:** 16 days only the hybrid was right, 5 only our model, p = 0.027.
 
-**The main finding holds on a second period:** the forecast beats our model on weather dangers, and the hybrid beats our model alone. Here our model's air part did help a little (2 more danger days caught than the forecast alone, for 3 more false alarms), unlike on the test period.
+**The main finding looks the same on a second period:** the forecast beats our model on weather dangers, and the hybrid beats our model alone. Here our model's air part did help a little (2 more danger days caught than the forecast alone, for 3 more false alarms), unlike on the test period.
 
-**Across both periods (486 school days), accuracy:** forecast + danger lines 0.92, Recess Ready 0.91, our model alone 0.86, "like today" 0.83.
+For description only (the two periods have different histories, so this is not a validation claim), accuracy across both periods (486 school days): forecast + danger lines 0.92, Recess Ready 0.91, our model alone 0.86, "like today" 0.83.
 
 ### Does a "danger day" mean a dangerous recess?
 
@@ -174,6 +176,18 @@ Our labels use whole days ("too cold" = the day's lowest feels-like, usually aro
 On no other test day did recess cross a line. So **our labels are cautious**: a "too cold" day is a cold day, but at recess it was usually a few degrees above our line. Recess Ready flags more days than recess-hour readings alone would. Predicting recess-hour conditions directly is a next step.
 
 ![Recess Ready, our model alone and the baseline on 270 test school days](docs/model_vs_baseline.png)
+
+### Weather dangers only
+
+The table above scores every method against all 70 danger days, including 14 air-danger days the forecast can't see. A cleaner test of the forecast, on the same 270 days with 65 weather danger days:
+
+| Method | Caught | Missed | False alarms | Precision | Recall | F1 | Accuracy |
+|---|---|---|---|---|---|---|---|
+| **Forecast + danger lines** (= the hybrid's weather part) | **58** | **7** | **10** | **0.85** | **0.89** | **0.87** | **0.94** |
+| Our model alone | 52 | 13 | 24 | 0.68 | 0.80 | 0.74 | 0.86 |
+| Baseline: "like today" | 42 | 23 | 21 | 0.67 | 0.65 | 0.66 | 0.84 |
+
+**Forecast timing.** The archive gives the value forecast 24 hours before each hour. So the day's high (afternoon) and low (dawn) were forecast by the afternoon or dawn of the day before, which is available for an evening decision. For the late-evening hours of the target day, the forecast came after an 8 PM decision; this barely affects daily highs and lows, but slightly helps rain totals. The live app uses the newest forecast from the same service. Open-Meteo's archive of past runs covers weather models, not air quality, which is why air dangers can't be compared this way.
 
 ### Recess Ready, by danger
 
@@ -203,7 +217,7 @@ Rain, wind and snow had too few test days to trust either way. Wind gusts are es
 
 Our model alone catches more cold, heat and ozone days than the baseline, but with more false alarms; on those three dangers its overall accuracy (0.86) is the same as the baseline's (0.87). It gives **no alerts at all** for the four rare ones.
 
-### Fairness: does it work equally well across groups?
+### Does it work equally well across seasons and places?
 
 These checks are for **our model alone** (we ran them before the forecast comparison; we didn't have time to repeat them for the hybrid).
 
@@ -220,7 +234,7 @@ These checks are for **our model alone** (we ran them before the forecast compar
 
 It is better than the baseline in fall and winter and slightly worse in spring and June. It is weakest in June, and in fall it misses 5 of the 7 danger days (mostly rain, wind and ozone).
 
-**By place:** we ran the Philadelphia model, without retraining, on 35 places across southeastern Pennsylvania, South Jersey and northern Delaware. Accuracy ranged from **0.81 to 0.86** (Center City: 0.85). The weakest places are in South Jersey, toward the coast.
+**By place (a regional consistency test, not proof it works elsewhere):** we ran the Philadelphia model, frozen (no retraining, same alert lines), on a regular grid of 35 places across southeastern Pennsylvania, South Jersey and northern Delaware. Accuracy ranged from **0.81 to 0.86** (Center City: 0.85). The weakest places are in South Jersey, toward the coast.
 
 ### What the model looks at
 
