@@ -178,7 +178,7 @@ Our weather history comes from a weather model (Open-Meteo), so we compared it w
 - **Wind is a daily average in the model.** Its wind input is one "main direction" for the whole day, which can hide changes during school hours. For example, on Nov 12, 2026 our daily data said east-northeast on a day when storms shifted the wind. Its gusts also run low: that day it had 21 mph where the airport measured 35 mph. The Past days tab shows the airport's real hour-by-hour readings, but the model doesn't use them yet.
 - **Air quality is a computer-model estimate** (CAMS), not sensor readings, and only goes back to August 2022.
 - **The live calls can't be scored yet.** Every result above is from the test period. Days 2 to 7 of the week ahead feed the model the *forecast* for the day before instead of measured weather. Step 16 tests that on old forecasts, but only for weather dangers, with estimated gusts, so treat those days as an early look that will change. The air-quality forecast only reaches about 5 days, so after that air dangers get no score. The hourly strip, the week graph and the map's temperatures are Open-Meteo's forecast, not our model.
-- **Holidays in the test.** The test results count every weekday from September to June as a school day. The live week ahead does skip weekends and federal holidays, plus any district days off listed in `NO_SCHOOL_DAYS` (Step 17), which a district fills in from its own calendar.
+- **Holidays in the test.** The test results count every weekday from September to June as a school day. The live week ahead does skip weekends and federal holidays, plus the School District of Philadelphia's 2026-27 days off, listed in `NO_SCHOOL_DAYS` (Step 17). A district would keep that list up to date.
 - **Some thresholds are our own settings** (20 °F, 1 inch of rain, 2 inches of snow). A district would set its own.
 
 ### What we tried that didn't work
@@ -228,6 +228,7 @@ RECESS_SKIP_APP=1 jupyter nbconvert --to notebook --execute --inplace main.ipynb
 **Data**
 - [Open-Meteo](https://open-meteo.com/) historical weather API (ERA5 reanalysis, Copernicus), forecast API (for the live call) and air quality API (CAMS, Copernicus). Free, no key, CC BY 4.0.
 - [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/request/download.phtml), Iowa State University: hourly reports from the Philadelphia International Airport weather station (PHL). Used to check our data and for the Past days tab's hour-by-hour view.
+- School District of Philadelphia 2026-27 school calendar: the days off for students, entered by our team in `NO_SCHOOL_DAYS` (Step 17).
 - Map tiles © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors.
 
 **Guidance behind the thresholds and advice**
