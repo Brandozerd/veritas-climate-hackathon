@@ -2,9 +2,11 @@
 
 **Veritas AI International High School Hackathon 2026, Climate track**
 
-**Our research question:** can machine learning improve next-day recess decisions beyond the weather forecast plus clear danger lines? **Our answer, from our tests: no.** Recess Ready is the tool we built along the way: a planning tool for principals, teachers and school staff in Philadelphia. Each evening it says whether **tomorrow's recess needs a change of plan**, and why: too hot, too cold, ozone smog, and more. It checks the weather forecast against danger lines for heat, cold, rain, wind and snow, and uses our machine-learning model for air quality. On 270 past school days, using the forecasts as they were issued, it caught **59 of 70** danger days with 13 false alarms. Our model alone caught 56 (27 false alarms); "tomorrow will be like today" caught 47 (25).
+**Our research question:** can machine learning improve next-day recess decisions beyond the weather forecast plus clear danger lines? **Our answer, from two attempts: no.** Recess Ready is the tool we built along the way: a planning tool for principals, teachers and school staff in Philadelphia. Each evening it says whether **tomorrow's recess needs a change of plan**, and why: too hot, too cold, ozone smog, and more. It checks the weather forecast against danger lines for heat, cold, rain, wind and snow, and uses our machine-learning model for air quality. On 270 past school days, using the forecasts as they were issued, it caught **59 of 70** danger days with 13 false alarms. Our model alone caught 56 (27 false alarms); "tomorrow will be like today" caught 47 (25).
 
-We first built a machine-learning model for everything. When we tested it against the plain weather forecast, the forecast won. The app now uses the forecast for weather; our model's air-quality part didn't improve any call in testing either. Our main contribution is that honest evaluation, and every result is below, including the disappointing ones.
+We first built a machine-learning model for everything. When we tested it against the plain weather forecast, the forecast won. So we tried a second, fairer way: machine learning *on top of* the forecast, learning where the forecast goes wrong. We wrote that design down first and ran it once. It did worse still (49 of 70 caught, p = 0.039 against the app). The app now uses the forecast for weather; our model's air-quality part didn't improve any call in testing either. Our main contribution is that honest evaluation, and every result is below, including the disappointing ones.
+
+**What's new:** not another forecast, but one recess decision for school staff, made the night before with its reason; a head-to-head test of our own ML against the weather forecast itself; and a replay of every past call against real airport readings.
 
 *Prototype, not official guidance. Always follow National Weather Service alerts and your school district's policy.*
 
@@ -24,6 +26,7 @@ On 270 test school days (September 2025 to November 2026), 70 with a danger:
 
 - Recess Ready vs our model alone: paired test p = 0.006. Vs "like today": p = 0.001.
 - Our model alone vs "like today": p = 0.38, so **that difference could be luck**.
+- Second try, ML on top of the forecast (design written down first, run once): caught 49 with 11 false alarms, F1 0.75. Worse than the app (p = 0.039) and than the forecast alone (p = 0.004).
 - Six days ahead, the forecast with our danger lines still caught 45 of 65 weather danger days.
 
 Where it fails: heavy rain, wind and snow had too few test days to trust; it can't alert on smoke; it can't see thunderstorms or ice. Details below.
@@ -165,6 +168,28 @@ The notebook repeats the comparison on the 2024-25 practice year, using the prac
 **The main finding looks the same on a second period:** the forecast beats our model on weather dangers, and the hybrid beats our model alone. Here our model's air part did help a little (2 more danger days caught than the forecast alone, for 3 more false alarms), unlike on the test period.
 
 For description only (the two periods have different histories, so this is not a validation claim), accuracy across both periods (486 school days): forecast + danger lines 0.92, Recess Ready 0.91, our model alone 0.86, "like today" 0.83.
+
+### Second try: machine learning on top of the forecast
+
+Our first model only saw today's weather, so it lost to the forecast. A fairer job for machine learning is to start from the forecast and learn where it goes wrong. **We wrote the design down in the notebook before running it, and ran it once on the test period** (Step 16, "Second try").
+
+- **Dangers:** too hot and too cold (the only weather dangers with enough practice-year days: 11 hot, 32 cold). Rain, wind and snow keep the plain forecast; air keeps our first model.
+- **Inputs:** tomorrow's forecast, how far it is from each danger line, and today's real weather.
+- **Training:** the 2024-25 practice year (216 school days), the only year with saved old forecasts before the test period. Alert lines chosen inside that year with blocked cross-validation (`MISS_COST = 2`).
+
+On the 270 test days (70 danger days):
+
+| Method | Caught | Missed | False alarms | Precision | Recall | F1 | Accuracy |
+|---|---|---|---|---|---|---|---|
+| Forecast + ML (second try) | 49 | 21 | 11 | 0.82 | 0.70 | 0.75 | 0.88 |
+| Recess Ready (hybrid) | 59 | 11 | 13 | 0.82 | 0.84 | 0.83 | 0.91 |
+| Forecast + danger lines (weather only) | 59 | 11 | 9 | 0.87 | 0.84 | 0.86 | 0.93 |
+
+- **Paired tests:** forecast + ML vs the app: only forecast + ML right on 2 days, only the app on 10, p = 0.039. Vs the forecast alone: 2 days vs 14, p = 0.004.
+- **Heat:** caught 7 of 16 hot days (plain forecast: 15). With 11 hot days to learn from, it chose a very cautious alert line (0.95).
+- **Cold:** caught 36 of 45 (plain forecast: 41), with 1 false alarm (forecast: 2).
+
+**The finding holds from two directions:** ML did not beat the forecast plus danger lines, whether it competed with the forecast or built on it. The likely reason is that the forecast comes from physics simulations of the whole atmosphere, and one year is far too little data to learn its mistakes. Caveat: we had already seen the test period, so this is a second look at the same exam and is exploratory.
 
 ### Does a "danger day" mean a dangerous recess?
 
@@ -308,6 +333,7 @@ So judges can see which results we looked at before each decision:
 | Sat 7:20-8:34 PM | Live forecast, airport station checks, days-ahead test on old forecasts. |
 | Sun 12:22 AM | Audit: tested the forecast + danger lines on the test period; it beat our model, so **we switched the app to the hybrid after seeing that result**. |
 | Sun, later | Per-danger and ozone checks, confidence intervals, recess-hour check, and the practice-year check above. |
+| Sun ~11:45 AM | Second try: ML on top of the forecast. Design written into the notebook first, then run once; it lost (above). The app was not changed. |
 
 ### What we tried that didn't work
 

@@ -94,6 +94,16 @@ First, fix the rare dangers: use tomorrow's weather forecast as an input, since 
 - **"Your statistics assume each day is independent."** Right, and weather comes in streaks. Resampling whole weeks gives wider intervals (hybrid 0.72-0.91, forecast alone 0.76-0.92), and we say our day-level tests may overstate certainty.
 - **"Was the forecast really available the evening before?"** The archive stores the value forecast 24 hours before each hour, so the day's high and low were forecast by the afternoon or dawn before. Late-evening hours came after an 8 PM decision, which barely affects highs and lows.
 
+## The two big questions: "what did the ML add?" and "what's new?"
+
+**Explain the second try in 30 seconds (both of you should be able to say this):**
+Our first model only saw today's weather, so it was racing a physics forecast it couldn't beat. So we gave ML a fairer job: start from the forecast and learn where it goes wrong for heat and cold. For example, does a forecast of 21 °F feels-like with strong wind usually end up colder? We wrote the whole design into the notebook *before* running it, so we couldn't tweak it after seeing the answer. Then we ran it once. It lost: 49 of 70 danger days caught against the app's 59 (p = 0.039). It caught only 7 of 16 hot days, because it had just 11 hot days to learn from and became too cautious.
+
+- **"So what did the ML add?"** Honestly, no better calls, and we tested that two ways. What the ML work added is the answer itself: we now know that for next-day recess calls in Philadelphia, a good forecast plus clear danger lines is hard to beat, and why (one year of saved forecasts is too little to learn a physics model's mistakes). The app uses what tested best. A principal gets a tool built on evidence, not on the assumption that ML must be better.
+- **"Why write the design down first?"** We had already seen the test period. If we tried many versions and kept the best, we'd fool ourselves. Writing it down first and running once is called pre-registration. Scientists use it for the same reason.
+- **"What would make the second try work?"** Several years of saved old forecasts, not one. Then the model has enough heat waves and cold snaps to learn the forecast's habits.
+- **"What's original here? Weather alerts already exist."** Three things. (1) It's a decision, not a forecast: one call for tomorrow's recess, for school staff, the night before, with the reason and the danger line next to each number. (2) We tested our own ML head-to-head against the weather forecast, and reported that it lost. Most student projects only compare against an easy baseline. (3) You can replay any past day and check our call against what the airport station actually measured, hour by hour.
+
 ## Before you submit
 
 - [ ] Each person has explained every step out loud once.

@@ -4,9 +4,11 @@
 
 **Problem.** Philadelphia school staff decide each day whether recess and PE go outside, usually the morning of, by looking out the window. Weather apps give numbers, not a decision, and heat and bad-air days hit students with asthma hardest.
 
-**What we built.** A planning tool for adult school staff. Each evening it gives one call for tomorrow (indoor recess, outdoor with limits, or outdoor as usual) and the reason, with each forecast number shown next to its danger line. It covers seven dangers: heat, cold, heavy rain, wind, snow, smoke and ozone. It also shows the week ahead, checks after-school hours, and replays past days against real airport-station readings. No personal data.
+**What's new.** Not another forecast: a *decision* for one user, made the night before, with its reason. And we tested our ML head-to-head against the weather forecast itself.
 
-**Approach.** Free Open-Meteo data: Philadelphia weather since 1995, air quality since 2022. Two random forests (weather and air), each danger with its own alert line, tuned on the 2024-25 school year (a miss costs twice a false alarm). Baselines: "tomorrow like today," and the tougher one, the weather forecast checked against our lines. We split by time and tested once on Sep 2025 to Nov 2026: 270 school days, 70 with a danger.
+**What we built.** A planning tool for adult school staff. Each evening it gives one call for tomorrow (indoor recess, outdoor with limits, or outdoor as usual) and the reason, with each forecast number shown next to its danger line. It covers seven dangers: heat, cold, heavy rain, wind, snow, smoke and ozone. It also shows the week ahead and replays past days against real airport readings. No personal data.
+
+**Approach.** Free Open-Meteo data (weather since 1995, air since 2022). Two random forests (weather and air), each danger with its own alert line, tuned on the 2024-25 school year (a miss costs twice a false alarm). Baselines: "tomorrow like today," and the tougher one, the weather forecast checked against our lines. We split by time and tested once on Sep 2025 to Nov 2026: 270 school days, 70 with a danger.
 
 **Results.**
 
@@ -18,10 +20,10 @@
 
 Recess Ready beat our model (p = 0.006) and the baseline (p = 0.001); our model vs. the baseline was not significant (p = 0.38).
 
-**Research question: can ML beat the forecast plus clear danger lines? Our answer: no.** The forecast alone caught 59 with only 9 false alarms, and our model's air part changed no call. We chose the hybrid after seeing these results, so they are exploratory.
+**Research question: can ML beat the forecast plus clear danger lines? Our answer, from two attempts: no.** The forecast alone caught 59 with only 9 false alarms, and our model's air part changed no call. So we tried ML *on top of* the forecast, learning where it goes wrong for heat and cold. We wrote the design down first and ran it once: 49 caught, F1 0.75, worse than the app (p = 0.039). We chose the hybrid after seeing test results, so all of this is exploratory.
 
 **Where it fails.** Too few test days for rain, wind and snow, and no smoke alerts. Thunderstorms and ice are not in the data. Labels are cautious: only 15 of 45 "too cold" days hit 20 °F at recess. One reading covers the whole city, and air data is a model estimate. Scores are risk scores, not percent chances. Checked by season, against the airport station, and across 35 places (details in README).
 
-**Next.** Predict recess-hour conditions, add real air sensors, and test with school staff.
+**Next.** Save forecasts for several years and retry ML on top of them, predict recess-hour conditions, add real air sensors, and test with school staff.
 
 **Sources and AI tools.** Data: Open-Meteo (CC BY 4.0), Iowa Environmental Mesonet, Philadelphia school calendar, OpenStreetMap. Libraries: pandas, scikit-learn, SciPy, Matplotlib, Gradio, Leaflet. AI: Claude Code (code and video), ChatGPT (judge-style review), Kokoro TTS (video voice). We ran everything and can explain every part.
