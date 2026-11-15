@@ -6,38 +6,35 @@ Before recording: run `git pull` and `python run.py` so the app shows real forec
 
 ---
 
-## 2-minute video (about 280 spoken words)
+## 2-minute video (our writer's draft, with real numbers; about 290 spoken words)
 
-**0:00-0:20 · The problem**
-*Screen: the app's header and Week ahead tab. (Optional: a few seconds of an empty schoolyard you film yourself.)*
+Fill the ⟨ ⟩ blanks from the app right before recording (the selected day's big card and Forecast check), and show that same day in the screen recording.
 
-> Every evening, someone at a Philadelphia school has to decide: does recess go outside tomorrow? Since September 2025, 45 school days have had a wind chill of 20 degrees or colder. Heat, smog and storms make it harder. Most schools decide at the last minute.
+**0:00-0:20 · The problem** *(Schuylkill River Trail, talking to camera)*
 
-**0:20-1:10 · Live demo**
-*Screen: click the selected school day's big card, then scroll slowly.*
+> Every day, elementary and middle schools across Philadelphia have to decide whether it's safe for kids to have recess outside. Weather apps give you numbers, not a decision. So staff end up guessing about cold, heat, smog and storms, and students with asthma are hit the hardest. We built Recess Ready to take the guesswork out of recess.
 
-> This is Recess Ready. Each evening it makes the call for tomorrow: indoor recess, outdoor with limits, or outdoor as usual, and why.
+**0:20-1:00 · Live demo** *(screen recording)*
+
+> No login. A teacher opens the website and reads one line: indoor recess, outdoor with limits, or outdoor as usual, and why.
 >
-> Here's the forecast check. Every number sits next to its danger line, so staff can see exactly why we made the call.
+> Right now it's calling ⟨CALL⟩ for ⟨DAY⟩. The forecast says a feels-like low of ⟨X⟩ degrees and wind from the ⟨DIRECTION⟩ at up to ⟨Y⟩ miles per hour. Every number sits next to its danger line, so you can see exactly why.
 >
-> It covers the whole day: lunch recess, and after-school sports from 3 to 6, where a 4 PM thunderstorm can change the plan.
+> It also checks the whole school day, 7 AM to 6 PM, including after-school sports, where a 4 PM thunderstorm can change the plan.
+
+**1:00-1:40 · How it works, and what we found** *(Results tab, then Past days)*
+
+> We used free weather and air-quality data from Open-Meteo going back to 1995, and trained a machine-learning model on 30 years of Philadelphia weather. Then we tested it on 270 school days it had never seen.
 >
-> *(Click Past days, pick Dec 3, 2025.)* And because it's a prototype, we can replay any past day. Here's what we knew the evening before, what actually happened, and whether we were right.
+> Guessing "tomorrow will be like today" caught 47 of 70 danger days. Our model caught 56. But the plain weather forecast, checked against our danger lines, caught 59, with a third of the false alarms. So we didn't hide that. The app uses what tested best, and you can replay any past day to check our calls.
 
-**1:10-1:40 · Results, and the honest twist**
-*Screen: Results tab, the research question box, then the table.*
+**1:40-2:00 · What's next** *(trail, walking)*
 
-> We started out trying to prove machine learning would beat the weather forecast. It didn't. On 270 school days we'd never trained on, our random forest caught 56 of 70 danger days. The plain forecast with our danger lines caught 59, with a third of the false alarms. A forecast already knows a cold front is coming; our model only sees today. So the app uses what tested best, and we report where it fails, like heavy rain and thunderstorms.
+> It's not perfect: heavy rain, thunderstorms and ice are still blind spots. Next, we want to feed the forecast into our model and test it on new months. Recess Ready: prototype, not official guidance.
 
-**1:40-2:00 · Who it helps and what's next**
-*Screen: back to the Week ahead, Copy message for staff button.*
+**On-screen text while editing:** "Like today: 47 of 70" → "Our model: 56 of 70, 27 false alarms" → "Forecast + danger lines: 59 of 70, 9 false alarms". Chart: `docs/model_vs_baseline.png`.
 
-> Recess Ready is for principals, teachers and coaches. One click copies a message for the staff chat. Next, we want to train a model that uses the forecast as an input, and test it on months nobody has seen. Prototype, not official guidance.
-
-**On-screen text to add while editing (optional):**
-- 1:15 → "Our model: 56 of 70 caught, 27 false alarms"
-- 1:20 → "Forecast + danger lines: 59 of 70, 9 false alarms"
-- Chart to flash: `docs/model_vs_baseline.png`
+**Facts to keep straight:** the model makes one call per day (not per hour); the hour-by-hour view is the Open-Meteo forecast. "A third of the false alarms" = 9 vs our model's 27.
 
 ---
 
