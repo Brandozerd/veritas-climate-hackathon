@@ -23,10 +23,10 @@ Use this on Sunday morning. Take turns: one person explains a step out loud, the
 | 11. Failures | Shows danger days it missed. | "On October 30, 2025 there was an inch of rain and we gave no alert. Rain is one of the dangers we can't predict yet." |
 | 12. Seasons | Accuracy by season. | "Better than the baseline in fall and winter, slightly worse in spring and June." |
 | 13. Real station | Compares our data and model with the airport's real weather station. | "Our data matched the real station on 98-99% of days. Against the station, we caught 45 and the baseline 38." |
-| 14. Hour by hour | Downloads the airport station's real hourly readings for the app. | "Our model uses one wind direction per day, which can hide a storm front. The app shows what the airport actually measured each hour, with lunch recess highlighted. The model doesn't use these hourly readings yet." |
+| 14. Hour by hour | Downloads the airport station's real hourly readings. | "Our model uses one wind direction per day, which can hide a storm front. The airport's hourly readings show what that daily number hides. The model doesn't use them yet." |
 | 15. Region | Runs the same model on 35 nearby places. | "Accuracy stayed between 81% and 86% without retraining. It's weakest in South Jersey near the coast." |
 | 16. Week ahead (live) | Downloads the last 3 days and next 7 from Open-Meteo for Philadelphia and 35 places, and scores each day with the same trained model. | "Tomorrow's call uses today's weather, exactly how we tested it. Days 2 to 7 use the forecast instead, which we haven't tested, so we call them an early look." |
-| 17. App | The week ahead on top (day cards, forecast map, week graph), then a replay of past days. | "Click a day and the call, the hours and the map switch instantly. Below, you can check past calls against what really happened." |
+| 17. App | The week ahead (day cards, wind map, forecast map, week graph), then the test results. | "Click a day and the call, the hours and the maps switch instantly. Below it is how well the model did on days it never saw." |
 
 ## Words to get right
 
@@ -69,7 +69,7 @@ First, fix the rare dangers: use tomorrow's weather forecast as an input, since 
 - **"Why is heavy rain 'not reliable' instead of just removed?"** Because a principal should know it's a blind spot. Hiding it would make the tool look more complete than it is.
 - **"Your air data is a model estimate. Is that a problem?"** It's a limit. We checked the weather side against real sensors (98-99% agreement) but could not do the same for air quality. Real monitors are a next step.
 - **"Is 'feels like 20 °F' an official rule?"** No. The heat and wind thresholds follow National Weather Service levels and the air thresholds follow EPA levels, but the cold, rain and snow thresholds are our own settings. A district would use its own policy.
-- **"Your wind direction looks wrong for some days."** The model's wind input is one daily average from weather-model data, so it can hide changes during the day and runs low on gusts. That's why the app also shows the airport's real hourly readings. Using hourly data in the model is our next step.
+- **"Your wind direction looks wrong for some days."** The model's wind input is one daily average from weather-model data, so it can hide changes during the day and runs low on gusts. For the week ahead, the app shows the hour-by-hour forecast for school hours. Using hourly data in the model is our next step.
 - **"Who wrote the code?"** An AI coding assistant wrote most of it from our instructions. We chose the problem, the user and the rules, ran every version, and can explain each step. (Then explain a step.)
 
 ## Before you submit

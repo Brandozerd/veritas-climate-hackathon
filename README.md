@@ -8,8 +8,6 @@ Recess Ready is a planning tool for principals, teachers and school staff in Phi
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Brandozerd/veritas-climate-hackathon/blob/main/notebooks/main.ipynb)
 
-![The app's call for Thursday, December 4, 2025: plan indoor recess, too cold](docs/app-call.png)
-
 ## Who it's for
 
 A principal or teacher deciding, the evening before, whether recess and PE go outside tomorrow. The app gives one call, the reason, and a suggested plan:
@@ -71,7 +69,7 @@ At the top of the app is **The week ahead**, made from live Open-Meteo weather a
 - **Week graph:** feels-like temperature and chance of rain, hour by hour for 7 days, with the 20 °F and 90 °F danger lines and school hours shaded.
 - **Refresh the forecast** downloads the latest data in a few seconds (the downloads run at the same time). Data less than 10 minutes old is reused instantly.
 
-Below that, pick a past school day. You get the call the tool would have made the evening before, what actually happened (including an hour-by-hour strip from the real airport station, with the lunch-recess hours highlighted), a risk score for each danger, a zoomable wind map of Philadelphia, the air-quality reading, and which wind directions bring dirtier air.
+Below that, **How well it works** shows the test-period results.
 
 ## Results
 
@@ -131,7 +129,7 @@ Our weather history comes from a weather model (Open-Meteo), so we compared it w
 - **Ozone alerts are noisy:** 6 caught, but 10 false alarms.
 - **Its scores are not percent chances.** We told the model to pay extra attention to rare dangers, which inflates their scores. The app shows a 0-100 "risk score" with an alert line instead.
 - **One reading for the whole city.** The data can't tell neighborhoods apart.
-- **Wind is a daily average in the model.** Its wind input is one "main direction" for the whole day, which can hide changes during school hours. For example, on Nov 12, 2026 our daily data said east-northeast on a day when storms shifted the wind. Its gusts also run low: that day it had 21 mph where the airport measured 35 mph. The app now shows the airport's real hour-by-hour readings, but the model doesn't use them yet.
+- **Wind is a daily average in the model.** Its wind input is one "main direction" for the whole day, which can hide changes during school hours. For example, on Nov 12, 2026 our daily data said east-northeast on a day when storms shifted the wind. Its gusts also run low: that day it had 21 mph where the airport measured 35 mph. The notebook shows the airport's real hour-by-hour readings for that day, but the model doesn't use them yet.
 - **Air quality is a computer-model estimate** (CAMS), not sensor readings, and only goes back to August 2022.
 - **The live calls can't be scored yet.** Every result above is from the test period, for next-day calls. Days 2 to 7 of the week ahead feed the model the *forecast* for the day before instead of measured weather. We never tested that, so treat those days as an early look that will change. The air-quality forecast only reaches about 5 days, so after that air dangers get no score. The hourly strip, the week graph and the map's temperatures are Open-Meteo's forecast, not our model.
 - **Holidays are ignored.** Every weekday from September to June counts as a school day.
@@ -183,7 +181,7 @@ RECESS_SKIP_APP=1 jupyter nbconvert --to notebook --execute --inplace main.ipynb
 
 **Data**
 - [Open-Meteo](https://open-meteo.com/) historical weather API (ERA5 reanalysis, Copernicus), forecast API (for the live call) and air quality API (CAMS, Copernicus). Free, no key, CC BY 4.0.
-- [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/request/download.phtml), Iowa State University: hourly reports from the Philadelphia International Airport weather station (PHL). Used to check our data and for the app's hour-by-hour view.
+- [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/request/download.phtml), Iowa State University: hourly reports from the Philadelphia International Airport weather station (PHL). Used to check our data.
 - Map tiles © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors.
 
 **Guidance behind the thresholds and advice**

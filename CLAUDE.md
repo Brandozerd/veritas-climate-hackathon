@@ -116,9 +116,9 @@ practice/              <- practice only, never reused
 - Model: two random forests (weather dangers on 30 years, air dangers on 2022 onward), with trend inputs.
 - Each danger has its own alert line, chosen on the 2024-25 practice year with `MISS_COST = 2`. Never tune anything on the test period (September 2025 to November 2026).
 - Checks: by season, against the real PHL airport station, and across 35 places in the region.
-- Step 14 downloads the PHL airport station's real hourly readings (saved as `data/phl_station_hourly.csv`). The app shows them hour by hour; the model does not use them.
+- Step 14 downloads the PHL airport station's real hourly readings (saved as `data/phl_station_hourly.csv`). They show what the daily data hides; neither the model nor the app uses them.
 - Step 16 is the live week ahead: `get_live()` downloads the last 3 days and next 7 for Philadelphia and the 35 places (four downloads at once, 20-second limit) and scores each day with the trained model (no retraining). Day 1 is the tested next-day call; days 2-7 use forecast inputs and are untested. Air scores are blank past the ~5-day air forecast. If it fails, `LIVE` is None and the app says so.
-- App (Step 17): Gradio, with "The week ahead" at the top (day cards, per-day panels, forecast map, week graph; day switching happens in the browser) and the past-day replay below, with maps drawn by `project/static/recess_maps.js` (Leaflet + OpenStreetMap). It shows US units and calls the model's output a "risk score," not a percent chance.
+- App (Step 17): Gradio, with "The week ahead" at the top (day cards, per-day panels, forecast map, week graph; day switching happens in the browser) and the test results below, with maps drawn by `project/static/recess_maps.js` (Leaflet + OpenStreetMap). It shows US units and calls the model's output a "risk score," not a percent chance.
 
 **Results we report (from the saved notebook):** Recess Ready caught 56 of 70 danger days, missed 14, with 27 false alarms (accuracy 0.85). The baseline caught 47, missed 23, with 25 false alarms (0.82). If the notebook's output changes, update the README, the write-up and the video to match.
 
