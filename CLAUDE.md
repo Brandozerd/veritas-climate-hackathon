@@ -109,13 +109,14 @@ practice/              <- practice only, never reused
 
 **What it is:** a planning tool for principals, teachers and school staff. Each evening it says whether tomorrow's recess needs a change of plan, and why. The audience is adult school staff: write for them, never for students, and never collect personal information.
 
-**How it works (all in `notebooks/main.ipynb`, Steps 1-15):**
+**How it works (all in `notebooks/main.ipynb`, Steps 1-16):**
 - Data: Open-Meteo daily weather since 1995 and air quality since August 2022, saved in `data/`. No API keys.
 - Seven dangers: too hot, too cold, heavy rain, dangerous wind, heavy snow, smoke and particles, ozone smog. Thunderstorms and ice were dropped because the data never records them.
 - Baseline: "tomorrow will be like today."
 - Model: two random forests (weather dangers on 30 years, air dangers on 2022 onward), with trend inputs.
 - Each danger has its own alert line, chosen on the 2024-25 practice year with `MISS_COST = 2`. Never tune anything on the test period (September 2025 to November 2026).
 - Checks: by season, against the real PHL airport station, and across 35 places in the region.
+- Step 14 downloads the PHL airport station's real hourly readings (saved as `data/phl_station_hourly.csv`). The app shows them hour by hour; the model does not use them.
 - App: Gradio, with maps drawn by `project/static/recess_maps.js` (Leaflet + OpenStreetMap). It shows US units and calls the model's output a "risk score," not a percent chance.
 
 **Results we report (from the saved notebook):** Recess Ready caught 56 of 70 danger days, missed 14, with 27 false alarms (accuracy 0.85). The baseline caught 47, missed 23, with 25 false alarms (0.82). If the notebook's output changes, update the README, the write-up and the video to match.

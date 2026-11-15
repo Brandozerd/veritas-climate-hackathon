@@ -23,8 +23,9 @@ Use this on Sunday morning. Take turns: one person explains a step out loud, the
 | 11. Failures | Shows danger days it missed. | "On October 30, 2025 there was an inch of rain and we gave no alert. Rain is one of the dangers we can't predict yet." |
 | 12. Seasons | Accuracy by season. | "Better than the baseline in fall and winter, slightly worse in spring and June." |
 | 13. Real station | Compares our data and model with the airport's real weather station. | "Our data matched the real station on 98-99% of days. Against the station, we caught 45 and the baseline 38." |
-| 14. Region | Runs the same model on 35 nearby places. | "Accuracy stayed between 81% and 86% without retraining. It's weakest in South Jersey near the coast." |
-| 15. App | Shows the call, the plan, risk scores, maps and air quality for a chosen day. | "It replays past days so you can check its call against what really happened." |
+| 14. Hour by hour | Downloads the airport station's real hourly readings for the app. | "Our model uses one wind direction per day, which can hide a storm front. The app shows what the airport actually measured each hour, with lunch recess highlighted. The model doesn't use these hourly readings yet." |
+| 15. Region | Runs the same model on 35 nearby places. | "Accuracy stayed between 81% and 86% without retraining. It's weakest in South Jersey near the coast." |
+| 16. App | Shows the call, the plan, risk scores, maps and air quality for a chosen day. | "It replays past days so you can check its call against what really happened." |
 
 ## Words to get right
 
@@ -56,7 +57,7 @@ Three places. It gives no alerts for heavy rain, wind, snow or smoke, because th
 Not equally. By season, it beats the baseline in fall (0.93 against 0.88) and winter (0.77 against 0.72), and is slightly behind in spring (0.82 against 0.83) and June (0.73 against 0.77). By place, accuracy across 35 places in the region ranges from 0.81 to 0.86, weakest in South Jersey.
 
 **What would you do with more time?**
-First, fix the rare dangers: use tomorrow's weather forecast as an input, since a forecast knows a storm is coming and yesterday's weather doesn't. Second, train a thunderstorm alert on the airport's decades of real storm reports. Third, use real air sensors or NASA's TEMPO satellite so each neighborhood gets its own air reading. Fourth, add the real school calendar and let a district set its own thresholds.
+First, fix the rare dangers: use tomorrow's weather forecast as an input, since a forecast knows a storm is coming and yesterday's weather doesn't. Second, train a thunderstorm alert on the airport's decades of real storm reports. Third, use the airport's hourly readings in the model itself, so it can make a call for the recess hours instead of the whole day. Fourth, use real air sensors or NASA's TEMPO satellite so each neighborhood gets its own air reading. Fifth, add the real school calendar and let a district set its own thresholds.
 
 ## Questions a judge might push on
 
@@ -64,6 +65,7 @@ First, fix the rare dangers: use tomorrow's weather forecast as an input, since 
 - **"Why is heavy rain 'not reliable' instead of just removed?"** Because a principal should know it's a blind spot. Hiding it would make the tool look more complete than it is.
 - **"Your air data is a model estimate. Is that a problem?"** It's a limit. We checked the weather side against real sensors (98-99% agreement) but could not do the same for air quality. Real monitors are a next step.
 - **"Is 'feels like 20 °F' an official rule?"** No. The heat and wind thresholds follow National Weather Service levels and the air thresholds follow EPA levels, but the cold, rain and snow thresholds are our own settings. A district would use its own policy.
+- **"Your wind direction looks wrong for some days."** The model's wind input is one daily average from weather-model data, so it can hide changes during the day and runs low on gusts. That's why the app also shows the airport's real hourly readings. Using hourly data in the model is our next step.
 - **"Who wrote the code?"** An AI coding assistant wrote most of it from our instructions. We chose the problem, the user and the rules, ran every version, and can explain each step. (Then explain a step.)
 
 ## Before you submit
