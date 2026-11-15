@@ -79,6 +79,8 @@ First, fix the rare dangers: use tomorrow's weather forecast as an input, since 
 - **"Your wind direction looks wrong for some days."** The model's wind input is one daily average from weather-model data, so it can hide changes during the day and runs low on gusts. The Past days tab shows the airport's real hourly readings, and the week ahead shows the hour-by-hour forecast. Using hourly data in the model is our next step.
 - **"Who wrote the code?"** An AI coding assistant wrote most of it from our instructions. We chose the problem, the user and the rules, ran every version, and can explain each step. (Then explain a step.)
 
+- **"My phone's weather app says something different."** Different source, and we show feels-like (wind chill and heat index), not the air temperature. Against the airport's real sensors, our data is typically 3-4 °F off and runs 2-3 °F colder on average. The day-before forecast is typically about 2 °F off. We report these numbers instead of hiding them.
+
 ## Before you submit
 
 - [ ] Each person has explained every step out loud once.

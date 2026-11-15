@@ -208,6 +208,10 @@ Limits: weather dangers only (no archive of old air forecasts); gusts are estima
 Our weather history comes from a weather model (Open-Meteo), so we compared it with the real weather station at Philadelphia International Airport for the test period.
 
 - The two agreed on **98-99% of days** for heat, cold, heavy rain and wind.
+- In degrees, our feels-like temperatures are typically **3-4 °F apart** from the station's (within 8 °F on 87-96% of days), and **run 2-3 °F colder on average**. So we probably flag slightly more cold days and slightly fewer hot days than the station would.
+- The forecast made the day before was typically **1.6-2.2 °F off** from what happened; six days ahead, **3.4-3.8 °F**.
+
+**Why another weather app shows different numbers:** it uses a different forecast source, often shows the actual air temperature rather than feels-like (on a windy winter day those differ by 8 °F or more), uses your exact location rather than one point in Center City, and its big number is "right now" rather than the day's high or low.
 - Scored against the station (those four dangers): Recess Ready caught **45** and missed **12**; the baseline caught 38 and missed 19. Recess Ready had 31 false alarms and the baseline 24.
 
 ### Where it fails
