@@ -417,4 +417,4 @@ RECESS_SKIP_APP=1 jupyter nbconvert --to notebook --execute --inplace main.ipynb
 ## Team
 
 - Brandon — app, charts, video and demo
-- [NAME] — write-up, sources and AI tools
+- Faadi Garcia — write-up, sources and AI tools

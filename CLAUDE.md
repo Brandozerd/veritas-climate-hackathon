@@ -9,7 +9,7 @@ We were 3 high school students; one teammate left during the event, so we are no
 | Role | Name | Job |
 |---|---|---|
 | Video, demo and coding | Brandon | Builds the demo and charts, makes the 2-minute video, drives the app and explains the model and results in the finals |
-| Write-up lead | [NAME] | Writes the one-page write-up, tracks sources and AI tools, covers limits and impact in the finals |
+| Write-up lead | Faadi Garcia | Writes the one-page write-up, tracks sources and AI tools, covers limits and impact in the finals |
 
 Both of us must understand and be able to explain every part of the project. Write and explain code with that in mind.
 

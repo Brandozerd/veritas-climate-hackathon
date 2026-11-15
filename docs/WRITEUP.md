@@ -1,6 +1,6 @@
 # Recess Ready: Philadelphia
 
-**Veritas AI Hackathon 2026 · Climate track · Team of 2** · *Prototype, not official guidance.*
+**Veritas AI Hackathon 2026 · Climate track · Brandon and Faadi Garcia** · *Prototype, not official guidance.*
 
 **Problem.** Philadelphia school staff decide each day whether recess and PE go outside, usually the morning of, by looking out the window. Weather apps give numbers, not a decision, and heat and bad-air days hit students with asthma hardest.
 
