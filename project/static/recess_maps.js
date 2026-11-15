@@ -213,6 +213,9 @@
   function selectDay(day) {
     document.querySelectorAll("[data-for-day]").forEach(e => { e.hidden = e.dataset.forDay !== day; });
     document.querySelectorAll("[data-day]").forEach(e => e.classList.toggle("sel", e.dataset.day === day));
+    // On a phone the day cards scroll sideways: bring the picked one into view
+    const card = document.querySelector(`.day-card[data-day="${day}"]`);
+    if (card) setTimeout(() => card.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "nearest", inline: "center" }), 60);
     for (const m of [saved.forecast, saved.mini]) {
       if (m && m.cfg) { m.cfg.selected = day; draw(m, m.cfg, false); }
     }
@@ -223,7 +226,7 @@
   });
 
   // ---------- Light / dark mode ----------
-  // Starts like the computer's setting; the moon/sun button switches it and the choice is remembered.
+  // Starts dark; the sun/moon switch changes it and the choice is remembered.
   function setTheme(dark) {
     document.documentElement.classList.toggle("rr-dark", dark);
     try { localStorage.setItem("rr-theme", dark ? "dark" : "light"); } catch (err) { /* private window: just don't remember */ }
@@ -231,7 +234,7 @@
   let savedTheme = null;
   try { savedTheme = localStorage.getItem("rr-theme"); } catch (err) { /* ignore */ }
   document.documentElement.classList.toggle("rr-dark",
-    savedTheme ? savedTheme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches);
+    savedTheme ? savedTheme === "dark" : true);       // dark unless the viewer picked light
   document.addEventListener("click", (e) => {
     if (e.target.closest(".theme-toggle")) setTheme(!document.documentElement.classList.contains("rr-dark"));
     // Maps drawn while their tab was hidden need to measure their size again when the tab is shown

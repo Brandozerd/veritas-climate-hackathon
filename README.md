@@ -73,11 +73,13 @@ The Colab badge above opens the same notebook. Its first cell downloads the rest
 6. **The week ahead (live):** how long the download took, then each of the next 7 days with whether it's a school day and its alerts. This needs an internet connection; without one it says so and everything else still runs.
 7. `Running on local URL: http://127.0.0.1:7860` — the app.
 
-The app has three tabs, and a moon/sun button in the header switches between light and dark mode (it starts out matching your computer's setting).
+The app has three tabs. It opens in dark mode; the sun/moon switch in the header changes it.
 
 The **Week ahead** tab is made from live Open-Meteo weather and air quality:
 
-- **Seven day cards**, each with its call (indoor, with limits, outdoor, or no school) and the forecast feels-like high and low. It opens on the next school day.
+- **Seven day cards**, each with a weather icon, the feels-like high and its call (indoor, with limits, outdoor, or no school). The picked day opens into a big card with the feels-like high and low, wind and rain. It opens on the next school day. Beside the cards: the **chance of rain** for each school hour.
+- **Why trust this call?** The real test results next to the call, including which alerts are tested and which are experimental.
+- **Across the region:** next to the forecast map, how many of the 35 places have each alert, and the coldest and warmest spots.
 - **Click a day** to see its call, plan, risk scores, staff message, the school day hour by hour (lunch recess highlighted, thunderstorms flagged), and a close-up wind map of Philadelphia. Switching days is instant: everything is already on the page.
 - **Forecast map:** smooth feels-like temperature bands across 35 places in the region, Recess Ready's alert areas, and wind arrows, for the day you picked.
 - **Week graph:** feels-like temperature and chance of rain, hour by hour for 7 days, with the 20 °F and 90 °F danger lines and school hours shaded.
