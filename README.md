@@ -60,10 +60,16 @@ The Colab badge above opens the same notebook. Its first cell downloads the rest
 3. A first model that fails (192 false alarms), then the fix.
 4. `Model (alert line per danger): accuracy 0.85 | caught 56 | missed 14 | false alarms 27`
 5. Checks by season, against the real airport weather station, an hour-by-hour example from the station, and across 35 places in the region.
-6. **Tonight's live call:** today's date, tomorrow's date, and tomorrow's risk score for each danger. This needs an internet connection; without one it says so and everything else still runs.
+6. **The week ahead (live):** how long the download took, then each of the next 7 days with whether it's a school day and its alerts. This needs an internet connection; without one it says so and everything else still runs.
 7. `Running on local URL: http://127.0.0.1:7860` — the app.
 
-At the top of the app is **Tonight's call**: the real call for tomorrow, made from today's live Open-Meteo weather and air quality, with the plan, the risk scores, the staff message, and tomorrow's school day hour by hour from the Open-Meteo forecast (lunch recess highlighted, thunderstorms flagged). If tomorrow isn't a school day, it says so and shows the next school day's forecast. **Refresh tonight's call** downloads the latest data.
+At the top of the app is **The week ahead**, made from live Open-Meteo weather and air quality:
+
+- **Seven day cards**, each with its call (indoor, with limits, outdoor, or no school) and the forecast feels-like high and low. It opens on the next school day.
+- **Click a day** to see its call, plan, risk scores, staff message, and the school day hour by hour (lunch recess highlighted, thunderstorms flagged). Switching days is instant: everything is already on the page.
+- **Forecast map:** smooth feels-like temperature bands across 35 places in the region, Recess Ready's alert areas, and wind arrows, for the day you picked.
+- **Week graph:** feels-like temperature and chance of rain, hour by hour for 7 days, with the 20 °F and 90 °F danger lines and school hours shaded.
+- **Refresh the forecast** downloads the latest data in a few seconds (the downloads run at the same time). Data less than 10 minutes old is reused instantly.
 
 Below that, pick a past school day. You get the call the tool would have made the evening before, what actually happened (including an hour-by-hour strip from the real airport station, with the lunch-recess hours highlighted), a risk score for each danger, two maps you can zoom, and the air-quality reading.
 
@@ -127,7 +133,7 @@ Our weather history comes from a weather model (Open-Meteo), so we compared it w
 - **One reading for the whole city.** The data can't tell neighborhoods apart.
 - **Wind is a daily average in the model.** Its wind input is one "main direction" for the whole day, which can hide changes during school hours. For example, on Nov 12, 2026 our daily data said east-northeast on a day when storms shifted the wind. Its gusts also run low: that day it had 21 mph where the airport measured 35 mph. The app now shows the airport's real hour-by-hour readings, but the model doesn't use them yet.
 - **Air quality is a computer-model estimate** (CAMS), not sensor readings, and only goes back to August 2022.
-- **The live call can't be scored yet.** Every result above is from the test period. Tonight's calls are new predictions; nobody knows yet if they are right. The hourly forecast strip is Open-Meteo's forecast, not our model.
+- **The live calls can't be scored yet.** Every result above is from the test period, for next-day calls. Days 2 to 7 of the week ahead feed the model the *forecast* for the day before instead of measured weather. We never tested that, so treat those days as an early look that will change. The air-quality forecast only reaches about 5 days, so after that air dangers get no score. The hourly strip, the week graph and the map's temperatures are Open-Meteo's forecast, not our model.
 - **Holidays are ignored.** Every weekday from September to June counts as a school day.
 - **Some thresholds are our own settings** (20 °F, 1 inch of rain, 2 inches of snow). A district would set its own.
 
@@ -146,7 +152,7 @@ These came from earlier versions of the notebook during the weekend:
 - **Split by time:** train before September 2025, test after. Never shuffled.
 - **Alert lines:** each danger gets its own, chosen on the 2024-25 school year with one rule: a missed danger day costs twice as much as a false alarm. The test period is not used for this.
 - **Baseline:** tomorrow's dangers are the same as today's.
-- **Live:** each evening the app downloads the last 7 days and today from Open-Meteo's free forecast API, builds the same inputs, and runs the trained model. Nothing is retrained.
+- **Live:** the app downloads the last 3 days and the next 7 from Open-Meteo's free forecast API for Philadelphia and the 35 region places, builds the same inputs, and runs the trained model. Nothing is retrained. Tomorrow uses today's weather (the tested setup); later days use the forecast for the day before.
 
 A side finding: Philadelphia's dirtiest air arrives on winds from the south and southwest (average AQI 83, against 60 on north winds). Hot days also go with worse air (correlation 0.53). That is a pattern, not proof of cause.
 

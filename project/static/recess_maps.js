@@ -106,6 +106,14 @@
     }
   }
 
+  // ---------- Forecast map: smooth feels-like temperature bands ----------
+  function drawTemps(layer, bands, svg) {
+    for (const b of bands) {
+      L.polygon(b.rings, { renderer: svg, fillRule: "evenodd", stroke: true, color: "#fff", weight: 0.6, opacity: 0.7,
+        fillColor: b.color, fillOpacity: 0.5, className: "rr-temp" }).addTo(layer).bindTooltip(b.tip, { sticky: true });
+    }
+  }
+
   // ---------- Build each map ONCE, then reuse it ----------
   // When a new date is picked, the app sends new HTML. Instead of making a brand-new map (slow:
   // new map pictures, new everything), we move the existing map into the new spot and only
@@ -120,9 +128,18 @@
     m.layer.clearLayers();
     m.el.querySelector(".rr-problem")?.remove();
     try {
-      if (c.kind === "close") drawClose(m.map, m.layer, c, first); else drawRegion(m.layer, c, m.uid, m.svg);
-      addArrows(m.layer, c.winds);
-      if (!c.winds.length) problem(m.el, "No regional weather data for this date (the newest days can be missing). Try an earlier date.");
+      let winds = c.winds;
+      if (c.kind === "close") drawClose(m.map, m.layer, c, first);
+      else if (c.kind === "forecast") {          // one day of the week ahead (picked with the day cards)
+        const d = c.days[c.selected] || { areas: [], winds: [], temps: [] };
+        drawTemps(m.layer, d.temps, m.svg);
+        drawRegion(m.layer, d, m.uid, m.svg);
+        winds = d.winds;
+        m.cfg = c;
+      }
+      else drawRegion(m.layer, c, m.uid, m.svg);
+      addArrows(m.layer, winds);
+      if (!winds.length) problem(m.el, "No regional weather data for this date (the newest days can be missing). Try an earlier date.");
     } catch (err) {
       problem(m.el, "Something went wrong drawing the map: " + err.message);
       console.error(err);
@@ -131,7 +148,7 @@
 
   function build(el) {
     const text = el.dataset.config;
-    const kind = el.classList.contains("region") ? "region" : "close";
+    const kind = el.classList.contains("forecast") ? "forecast" : el.classList.contains("region") ? "region" : "close";
     const m0 = saved[kind];
     // Skip if this box already shows this exact data with the map inside it
     if (el._shown === text && m0 && el.contains(m0.inner)) return;
@@ -163,7 +180,7 @@
       let loaded = 0, failed = 0;
       const m = { el, inner, map, layer: null, uid: "rr" + (++counter) };
       // 1) The map picture Python downloaded (works even if the browser can't load tiles)
-      const picture = (window.RR_PICTURES || {})[c.kind];
+      const picture = (window.RR_PICTURES || {})[c.kind === "forecast" ? "region" : c.kind];
       if (picture) {
         L.imageOverlay(picture.url, picture.bounds, { attribution: CREDIT }).addTo(map);
         map.setMaxBounds(L.latLngBounds(picture.bounds).pad(0.15));
@@ -178,12 +195,25 @@
         })
         .addTo(map);
       m.layer = L.layerGroup().addTo(map);
-      if (c.kind === "region") m.svg = setupRegion(map, c, m.uid);
+      if (c.kind !== "close") m.svg = setupRegion(map, c, m.uid);
       saved[c.kind] = m;
       draw(m, c, true);
       setTimeout(() => map.invalidateSize(), 250);   // fix size if the page moved while loading
     });
   }
+
+  // ---------- Picking a day in the week ahead ----------
+  // Everything for all 7 days is already on the page, so switching days is instant (no download).
+  function selectDay(day) {
+    document.querySelectorAll("[data-for-day]").forEach(e => { e.hidden = e.dataset.forDay !== day; });
+    document.querySelectorAll("[data-day]").forEach(e => e.classList.toggle("sel", e.dataset.day === day));
+    const m = saved.forecast;
+    if (m && m.cfg) { m.cfg.selected = day; draw(m, m.cfg, false); }
+  }
+  document.addEventListener("click", (e) => {
+    const pick = e.target.closest("[data-day]");
+    if (pick) selectDay(pick.dataset.day);
+  });
 
   // ---------- "Copy message for staff" button ----------
   // Copies a short message the recess lead can paste into the staff group chat
