@@ -88,10 +88,11 @@ The **Week ahead** tab is made from live Open-Meteo weather and air quality:
 - **Seven day cards**, each with a weather icon, the feels-like high and its call (indoor, with limits, outdoor, or no school). The picked day opens into a big card with the feels-like high and low, wind and rain. It opens on the next school day. Beside the cards: the **chance of rain** for each school hour.
 - **Why trust this call?** The real test results next to the call, including which alerts are tested and which are experimental.
 - **Across the region:** next to the forecast map, how many of the 35 places have each alert, and the coldest and warmest spots.
-- **Click a day** to see its call, plan, risk scores, staff message, the school day hour by hour (lunch recess highlighted, thunderstorms flagged), and a close-up wind map of Philadelphia. Switching days is instant: everything is already on the page.
+- **Click a day** to see its call, plan, risk scores, staff message, the day hour by hour from 7 AM to 6 PM (lunch recess and after-school hours shaded, thunderstorms flagged), and a close-up wind map of Philadelphia. Switching days is instant: everything is already on the page.
 - **Forecast map:** smooth feels-like temperature bands across 35 places in the region, Recess Ready's alert areas, and wind arrows, for the day you picked.
 - **Week graph:** feels-like temperature and chance of rain, hour by hour for 7 days, with the 20 °F and 90 °F danger lines and school hours shaded.
-- **Refresh the forecast** downloads the latest data in a few seconds (the downloads run at the same time). Data less than 10 minutes old is reused instantly.
+- **Activities:** recess and PE follow the day's call. **After-school sports and clubs (3 to 6 PM)** get their own check from the hourly forecast: thunderstorms, feels-like 90 °F or 20 °F, rain chance of 60% or more, or an air-quality alert. This hourly check wasn't tested like the daily call, and the app says so.
+- **Always current:** the forecast downloads each time the page opens (the downloads run at the same time; data under 10 minutes old is reused), so there's no refresh button. If a download fails, reload the page.
 
 The **Past days** tab replays any school day from the test period: the call Recess Ready would have made the evening before, what actually happened and whether the call was right, the risk scores, the airport weather station's real readings hour by hour (lunch recess highlighted), and the wind map for the evening before.
 
