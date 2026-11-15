@@ -8,6 +8,18 @@ Recess Ready is a planning tool for principals, teachers and school staff in Phi
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Brandozerd/veritas-climate-hackathon/blob/main/notebooks/main.ipynb)
 
+## Results at a glance
+
+| | Recess Ready | Baseline: "tomorrow will be like today" |
+|---|---|---|
+| Danger days caught (of 70, on 270 test school days it never saw) | **56** | 47 |
+| Weather danger days caught a week ahead (of 65, tested on old forecasts) | **45** | 29 |
+| Checked against the real airport weather station: danger days caught | **45** | 38 |
+
+Where it fails: it can't yet alert on heavy rain, dangerous wind, heavy snow or smoke, and it can't see thunderstorms or ice. Details below.
+
+![Recess Ready against the baseline on 270 test school days](docs/model_vs_baseline.png)
+
 ## Who it's for
 
 A principal or teacher deciding, the evening before, whether recess and PE go outside tomorrow. The app gives one call, the reason, and a suggested plan:
@@ -115,6 +127,8 @@ The model beats the baseline on the three common dangers. It gives **no alerts a
 | Spring | 65 | 10 | 0.82 | 0.83 | 6 |
 | June | 22 | 8 | 0.73 | 0.77 | 0 |
 
+![Accuracy by season](docs/by_season.png)
+
 It is better than the baseline in fall and winter and slightly worse in spring and June. It is weakest in June, and in fall it misses 5 of the 7 danger days (mostly rain, wind and ozone).
 
 **By place:** we ran the Philadelphia model, without retraining, on 35 places across southeastern Pennsylvania, South Jersey and northern Delaware. Accuracy ranged from **0.81 to 0.86** (Center City: 0.85). The weakest places are in South Jersey, toward the coast.
@@ -143,7 +157,9 @@ The app shows a week, so we tested calls made 2 to 7 days ahead, using Open-Mete
 
 Recess Ready holds up across the week: it still catches 45 of 65 weather danger days a week ahead, while "it will be like today" falls to 29. The model leans on the weather forecast, and forecasts stay useful for days, while today's weather says less and less about next week. The gap grows from 10 danger days (tomorrow) to 16 (a week out).
 
-Limits: weather dangers only (no archive of old air forecasts); gusts are estimated; the 1-day row uses measured weather, so it isn't exactly comparable with the others. Chart: `docs/days_ahead.png`.
+Limits: weather dangers only (no archive of old air forecasts); gusts are estimated; the 1-day row uses measured weather, so it isn't exactly comparable with the others. 
+
+![How far ahead it can see](docs/days_ahead.png)
 
 ### Checked against real sensors
 
