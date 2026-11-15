@@ -66,12 +66,12 @@ The Colab badge above opens the same notebook. Its first cell downloads the rest
 At the top of the app is **The week ahead**, made from live Open-Meteo weather and air quality:
 
 - **Seven day cards**, each with its call (indoor, with limits, outdoor, or no school) and the forecast feels-like high and low. It opens on the next school day.
-- **Click a day** to see its call, plan, risk scores, staff message, and the school day hour by hour (lunch recess highlighted, thunderstorms flagged). Switching days is instant: everything is already on the page.
+- **Click a day** to see its call, plan, risk scores, staff message, the school day hour by hour (lunch recess highlighted, thunderstorms flagged), and a close-up wind map of Philadelphia. Switching days is instant: everything is already on the page.
 - **Forecast map:** smooth feels-like temperature bands across 35 places in the region, Recess Ready's alert areas, and wind arrows, for the day you picked.
 - **Week graph:** feels-like temperature and chance of rain, hour by hour for 7 days, with the 20 °F and 90 °F danger lines and school hours shaded.
 - **Refresh the forecast** downloads the latest data in a few seconds (the downloads run at the same time). Data less than 10 minutes old is reused instantly.
 
-Below that, pick a past school day. You get the call the tool would have made the evening before, what actually happened (including an hour-by-hour strip from the real airport station, with the lunch-recess hours highlighted), a risk score for each danger, two maps you can zoom, and the air-quality reading.
+Below that, pick a past school day. You get the call the tool would have made the evening before, what actually happened (including an hour-by-hour strip from the real airport station, with the lunch-recess hours highlighted), a risk score for each danger, a zoomable wind map of Philadelphia, the air-quality reading, and which wind directions bring dirtier air.
 
 ## Results
 
@@ -197,7 +197,7 @@ RECESS_SKIP_APP=1 jupyter nbconvert --to notebook --execute --inplace main.ipynb
 - Fonts: Geist and Instrument Serif, loaded from Google Fonts (SIL Open Font License).
 
 **Design references**
-- The regional alert map borrows the look of the National Weather Service national forecast chart.
+- The forecast map borrows the look of the National Weather Service national forecast chart.
 
 ## AI tools used
 

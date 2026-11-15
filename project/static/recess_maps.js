@@ -130,6 +130,12 @@
     try {
       let winds = c.winds;
       if (c.kind === "close") drawClose(m.map, m.layer, c, first);
+      else if (c.kind === "mini") {              // the close-up map for the picked day of the week ahead
+        const d = c.days[c.selected] || c;
+        drawClose(m.map, m.layer, { ...c, ...d }, first);
+        winds = d.winds;
+        m.cfg = c;
+      }
       else if (c.kind === "forecast") {          // one day of the week ahead (picked with the day cards)
         const d = c.days[c.selected] || { areas: [], winds: [], temps: [] };
         drawTemps(m.layer, d.temps, m.svg);
@@ -148,7 +154,8 @@
 
   function build(el) {
     const text = el.dataset.config;
-    const kind = el.classList.contains("forecast") ? "forecast" : el.classList.contains("region") ? "region" : "close";
+    const kind = el.classList.contains("mini") ? "mini" : el.classList.contains("forecast") ? "forecast"
+      : el.classList.contains("region") ? "region" : "close";
     const m0 = saved[kind];
     // Skip if this box already shows this exact data with the map inside it
     if (el._shown === text && m0 && el.contains(m0.inner)) return;
@@ -180,7 +187,7 @@
       let loaded = 0, failed = 0;
       const m = { el, inner, map, layer: null, uid: "rr" + (++counter) };
       // 1) The map picture Python downloaded (works even if the browser can't load tiles)
-      const picture = (window.RR_PICTURES || {})[c.kind === "forecast" ? "region" : c.kind];
+      const picture = (window.RR_PICTURES || {})[{ forecast: "region", mini: "close" }[c.kind] || c.kind];
       if (picture) {
         L.imageOverlay(picture.url, picture.bounds, { attribution: CREDIT }).addTo(map);
         map.setMaxBounds(L.latLngBounds(picture.bounds).pad(0.15));
@@ -195,7 +202,7 @@
         })
         .addTo(map);
       m.layer = L.layerGroup().addTo(map);
-      if (c.kind !== "close") m.svg = setupRegion(map, c, m.uid);
+      if (c.kind === "region" || c.kind === "forecast") m.svg = setupRegion(map, c, m.uid);
       saved[c.kind] = m;
       draw(m, c, true);
       setTimeout(() => map.invalidateSize(), 250);   // fix size if the page moved while loading
@@ -207,8 +214,9 @@
   function selectDay(day) {
     document.querySelectorAll("[data-for-day]").forEach(e => { e.hidden = e.dataset.forDay !== day; });
     document.querySelectorAll("[data-day]").forEach(e => e.classList.toggle("sel", e.dataset.day === day));
-    const m = saved.forecast;
-    if (m && m.cfg) { m.cfg.selected = day; draw(m, m.cfg, false); }
+    for (const m of [saved.forecast, saved.mini]) {
+      if (m && m.cfg) { m.cfg.selected = day; draw(m, m.cfg, false); }
+    }
   }
   document.addEventListener("click", (e) => {
     const pick = e.target.closest("[data-day]");
