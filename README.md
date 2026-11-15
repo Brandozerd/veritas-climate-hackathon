@@ -125,7 +125,21 @@ Scikit-learn's quick built-in ranking said wind direction (east-west part) matte
 
 The app shows a week, so we tested calls made 2 to 7 days ahead, using Open-Meteo's archive of old forecasts (Step 16): weather dangers only, on the same test school days.
 
-*Team: paste the Step 16 table here after running the notebook. Chart: `docs/days_ahead.png`.*
+65 of the 270 test school days had a weather danger.
+
+| Days ahead | Recess Ready caught | False alarms | Accuracy | Baseline caught | Baseline false alarms | Baseline accuracy |
+|---|---|---|---|---|---|---|
+| 1 (tomorrow) | 52 | 24 | 0.86 | 42 | 21 | 0.84 |
+| 2 | 51 | 30 | 0.84 | 36 | 24 | 0.80 |
+| 3 | 49 | 24 | 0.85 | 35 | 28 | 0.79 |
+| 4 | 50 | 24 | 0.86 | 31 | 34 | 0.75 |
+| 5 | 46 | 24 | 0.84 | 29 | 33 | 0.74 |
+| 6 | 46 | 25 | 0.84 | 27 | 33 | 0.74 |
+| 7 | 45 | 25 | 0.83 | 29 | 34 | 0.74 |
+
+Recess Ready holds up across the week: it still catches 45 of 65 weather danger days a week ahead, while "it will be like today" falls to 29. The model leans on the weather forecast, and forecasts stay useful for days, while today's weather says less and less about next week. The gap grows from 10 danger days (tomorrow) to 16 (a week out).
+
+Limits: weather dangers only (no archive of old air forecasts); gusts are estimated; the 1-day row uses measured weather, so it isn't exactly comparable with the others. Chart: `docs/days_ahead.png`.
 
 ### Checked against real sensors
 
