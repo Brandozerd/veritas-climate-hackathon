@@ -87,3 +87,24 @@ Roles: **Brandon** drives the app and explains the model and results. **Write-up
 3. **Do your labels mean a dangerous recess?** Not exactly: they're whole-day extremes; only 15 of 45 "too cold" days crossed 20 °F at recess.
 4. **What does your ML add?** On the test period, no changed calls; on the practice year, 2 more danger days caught for 3 more false alarms.
 5. **Would you trust a school to use this?** As decision support, yes; as a safety authority, no. Staff decide, and it shows them why.
+
+---
+
+## Final video: AI voiceover script (1:31, `docs/recess_ready_video.mp4`)
+
+This is what the finished video says, word for word. The voice is an AI voice (Kokoro TTS). The pictures are animation plus screenshots of our app's Past days tab (Monday, January 26, 2026, a test-period day) and Results tab. Every number is from the saved notebook.
+
+| Time | Scene | Voiceover |
+|---|---|---|
+| 0:00 | The question | Every evening, school staff in Philadelphia face one question. Is recess safe tomorrow? |
+| 0:05 | The dangers | Cold. Heat. Smog. Storms. |
+| 0:09 | The problem | Most schools decide on the spot. The morning of. By looking out the window. By then, there's no time to plan. |
+| 0:17 | Recess Ready | So we built Recess Ready. It makes the recess call the night before. And it explains why. |
+| 0:23 | The data | It learns from thirty years of Philadelphia weather. And air quality since twenty twenty two. All free, open data. |
+| 0:31 | How it works | It watches for seven dangers. Each one has its own alert line. A random forest scores the risk, and the weather forecast checks it. |
+| 0:39 | The call and its reason | Every call shows its reason. On this cold Monday, the forecast low felt like minus one. That crossed the twenty degree line. |
+| 0:47 | Replay a past day | You can replay any test day, and see what really happened, hour by hour, at the airport. At recess, it felt like ten degrees. |
+| 0:55 | The test | We tested it on fourteen months it never saw. Two hundred seventy school days. Seventy danger days. |
+| 1:02 | Results | The simple guess, tomorrow will be like today, caught forty seven. Our model caught fifty six. Recess Ready caught fifty nine, with only thirteen false alarms. |
+| 1:12 | The honest part | And the honest part. Our machine learning model did not beat the plain forecast on weather. Thunderstorms and ice are invisible in our data. And the scores are not percent chances. |
+| 1:23 | Close | Recess Ready. The recess call, made the night before. A prototype, not official guidance. |
