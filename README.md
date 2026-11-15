@@ -85,7 +85,7 @@ The app has three tabs. It opens in dark mode; the sun/moon switch in the header
 
 The **Week ahead** tab is made from live Open-Meteo weather and air quality:
 
-- **Seven day cards**, each with a weather icon, the feels-like high and its call (indoor, with limits, outdoor, or no school). The picked day opens into a big card with the feels-like high and low, wind and rain. It opens on the next school day. Beside the cards: the **chance of rain** for each school hour.
+- **Day cards for today and the next seven days**, each with a weather icon, the feels-like high and its call (indoor, with limits, outdoor, or no school). The picked day opens into a big card with the feels-like high and low, wind and rain. It opens on the next school day. Beside the cards: the **chance of rain** for each school hour.
 - **Why trust this call?** The real test results next to the call, including which alerts are tested and which are experimental.
 - **Across the region:** next to the forecast map, how many of the 35 places have each alert, and the coldest and warmest spots.
 - **Click a day** to see its call, plan, risk scores, staff message, the day hour by hour from 7 AM to 6 PM (lunch recess and after-school hours shaded, thunderstorms flagged), and a close-up wind map of Philadelphia. Switching days is instant: everything is already on the page.
