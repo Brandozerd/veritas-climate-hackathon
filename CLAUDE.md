@@ -124,7 +124,7 @@ practice/              <- practice only, never reused
 
 **Results we report (from the saved notebook):** Recess Ready caught 56 of 70 danger days, missed 14, with 27 false alarms (accuracy 0.85). The baseline caught 47, missed 23, with 25 false alarms (0.82). If the notebook's output changes, update the README, the write-up and the video to match.
 
-**Known limits to say out loud:** no reliable alerts for heavy rain, wind, snow or smoke; thunderstorms and ice are invisible; one reading for the whole city; air data is a model estimate; holidays ignored; scores are not percent chances.
+**Known limits to say out loud:** no reliable alerts for heavy rain, wind, snow or smoke; thunderstorms and ice are invisible; one reading for the whole city; air data is a model estimate; the test counts every weekday as a school day (the live week ahead skips federal holidays and the district days in `NO_SCHOOL_DAYS`); scores are not percent chances.
 
 **Before changing the model:** re-run the notebook, save it with outputs (`RECESS_SKIP_APP=1 jupyter nbconvert --to notebook --execute --inplace main.ipynb` from `notebooks/`), and update every number in the README.
 
