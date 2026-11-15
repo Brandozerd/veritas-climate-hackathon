@@ -129,9 +129,8 @@
     m.el.querySelector(".rr-problem")?.remove();
     try {
       let winds = c.winds;
-      if (c.kind === "close") drawClose(m.map, m.layer, c, first);
-      else if (c.kind === "mini") {              // the close-up map for the picked day of the week ahead
-        const d = c.days[c.selected] || c;
+      if (c.kind === "close" || c.kind === "mini") {   // close-up wind map (replay: 1 day, week ahead: 7)
+        const d = (c.days && c.days[c.selected]) || c;
         drawClose(m.map, m.layer, { ...c, ...d }, first);
         winds = d.winds;
         m.cfg = c;
