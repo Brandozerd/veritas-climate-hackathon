@@ -4,15 +4,14 @@ Read this whole file before doing anything in this repo. Follow it every time.
 
 ## 1. Who we are
 
-We are a team of 3 high school students. We are beginners in Python: two of us can solve CodingBat-level problems, and none of us has built a machine learning project before. We are competing in the **Climate** track.
+We were 3 high school students; one teammate left during the event, so we are now a **team of 2**. We are beginners in Python, and neither of us had built a machine learning project before. We are competing in the **Climate** track.
 
 | Role | Name | Job |
 |---|---|---|
-| Main engineer | [NAME] | Writes most of the code in the notebook |
-| Video + coding assistant | Brandon | Builds the demo and charts, makes the 2-minute video, helps test code |
-| Write-up lead | [NAME] | Writes the one-page write-up, tracks sources and AI tools |
+| Video, demo and coding | Brandon | Builds the demo and charts, makes the 2-minute video, drives the app and explains the model and results in the finals |
+| Write-up lead | [NAME] | Writes the one-page write-up, tracks sources and AI tools, covers limits and impact in the finals |
 
-All three of us must understand and be able to explain every part of the project. Write and explain code with that in mind.
+Both of us must understand and be able to explain every part of the project. Write and explain code with that in mind.
 
 ## 2. The event
 

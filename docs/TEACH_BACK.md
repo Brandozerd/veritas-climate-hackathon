@@ -1,6 +1,6 @@
 # Teach-back guide: explain Recess Ready to a judge
 
-Use this on Sunday morning. Take turns: one person explains a step out loud, the others ask "why?" until the answer is solid. Every number here comes from the saved notebook.
+Use this on Sunday morning. Take turns: one of you explains a step out loud, the other asks "why?" until the answer is solid. Every number here comes from the saved notebook.
 
 ## The project in 30 seconds
 

@@ -375,10 +375,10 @@ RECESS_SKIP_APP=1 jupyter nbconvert --to notebook --execute --inplace main.ipynb
 
 - **Claude Code** (Anthropic's AI coding assistant) wrote most of the code and this README from our instructions. We chose the idea, the user, the dangers and the "a miss costs double" rule; ran every version ourselves; and reported the results that came out, including the ones that failed.
 - Inside Claude Code we used these add-on skills: frontend-design, impeccable, apple-design and anti-ui-slop (visual design guidance), webapp-testing (browser screenshots to check the app), llm-council (to argue over project ideas), and find-skill (to find the others).
-- *Team: add any other AI tool you used here, for example GitHub Copilot or ChatGPT.*
+- **ChatGPT** (OpenAI): we used it to review the project like a judge would. Its critiques led us to add the forecast baseline, the recess-hour label check, the development-period check and the confidence intervals. All code and every number came from our notebook.
+- *Team: add any other AI tool you used here.*
 
 ## Team
 
-- [NAME] — main engineer
-- Brandon — app, charts and video
-- [NAME] — write-up
+- Brandon — app, charts, video and demo
+- [NAME] — write-up, sources and AI tools
