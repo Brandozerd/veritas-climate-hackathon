@@ -235,7 +235,11 @@
   document.addEventListener("click", (e) => {
     if (e.target.closest(".theme-toggle")) setTheme(!document.documentElement.classList.contains("rr-dark"));
     // Maps drawn while their tab was hidden need to measure their size again when the tab is shown
-    if (e.target.closest('[role="tab"]')) setTimeout(() => Object.values(saved).forEach(m => m.map.invalidateSize()), 120);
+    if (e.target.closest('[role="tab"]')) setTimeout(() => Object.values(saved).forEach(m => {
+      m.map.invalidateSize();
+      // A close-up map first drawn in a hidden tab had no size, so center it again now that it shows
+      if (m.cfg && (m.cfg.kind === "close" || m.cfg.kind === "mini")) draw(m, m.cfg, true);
+    }), 150);
   });
 
   // ---------- "Copy message for staff" button ----------

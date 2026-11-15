@@ -61,7 +61,7 @@ The Colab badge above opens the same notebook. Its first cell downloads the rest
 6. **The week ahead (live):** how long the download took, then each of the next 7 days with whether it's a school day and its alerts. This needs an internet connection; without one it says so and everything else still runs.
 7. `Running on local URL: http://127.0.0.1:7860` — the app.
 
-The app has two tabs, and a moon/sun button in the header switches between light and dark mode (it starts out matching your computer's setting).
+The app has three tabs, and a moon/sun button in the header switches between light and dark mode (it starts out matching your computer's setting).
 
 The **Week ahead** tab is made from live Open-Meteo weather and air quality:
 
@@ -71,7 +71,9 @@ The **Week ahead** tab is made from live Open-Meteo weather and air quality:
 - **Week graph:** feels-like temperature and chance of rain, hour by hour for 7 days, with the 20 °F and 90 °F danger lines and school hours shaded.
 - **Refresh the forecast** downloads the latest data in a few seconds (the downloads run at the same time). Data less than 10 minutes old is reused instantly.
 
-The **How well it works** tab shows the test-period results and how the model works.
+The **Past days** tab replays any school day from the test period: the call Recess Ready would have made the evening before, what actually happened and whether the call was right, the risk scores, the airport weather station's real readings hour by hour (lunch recess highlighted), and the wind map for the evening before.
+
+The **Results** tab shows the test-period results and how the model works.
 
 ## Results
 
@@ -157,7 +159,7 @@ Our weather history comes from a weather model (Open-Meteo), so we compared it w
 - **Ozone alerts are noisy:** 6 caught, but 10 false alarms.
 - **Its scores are not percent chances.** We told the model to pay extra attention to rare dangers, which inflates their scores. The app shows a 0-100 "risk score" with an alert line instead.
 - **One reading for the whole city.** The data can't tell neighborhoods apart.
-- **Wind is a daily average in the model.** Its wind input is one "main direction" for the whole day, which can hide changes during school hours. For example, on Nov 12, 2026 our daily data said east-northeast on a day when storms shifted the wind. Its gusts also run low: that day it had 21 mph where the airport measured 35 mph. The notebook shows the airport's real hour-by-hour readings for that day, but the model doesn't use them yet.
+- **Wind is a daily average in the model.** Its wind input is one "main direction" for the whole day, which can hide changes during school hours. For example, on Nov 12, 2026 our daily data said east-northeast on a day when storms shifted the wind. Its gusts also run low: that day it had 21 mph where the airport measured 35 mph. The Past days tab shows the airport's real hour-by-hour readings, but the model doesn't use them yet.
 - **Air quality is a computer-model estimate** (CAMS), not sensor readings, and only goes back to August 2022.
 - **The live calls can't be scored yet.** Every result above is from the test period. Days 2 to 7 of the week ahead feed the model the *forecast* for the day before instead of measured weather. Step 16 tests that on old forecasts, but only for weather dangers, with estimated gusts, so treat those days as an early look that will change. The air-quality forecast only reaches about 5 days, so after that air dangers get no score. The hourly strip, the week graph and the map's temperatures are Open-Meteo's forecast, not our model.
 - **Holidays are ignored.** Every weekday from September to June counts as a school day.
@@ -209,7 +211,7 @@ RECESS_SKIP_APP=1 jupyter nbconvert --to notebook --execute --inplace main.ipynb
 
 **Data**
 - [Open-Meteo](https://open-meteo.com/) historical weather API (ERA5 reanalysis, Copernicus), forecast API (for the live call) and air quality API (CAMS, Copernicus). Free, no key, CC BY 4.0.
-- [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/request/download.phtml), Iowa State University: hourly reports from the Philadelphia International Airport weather station (PHL). Used to check our data.
+- [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/request/download.phtml), Iowa State University: hourly reports from the Philadelphia International Airport weather station (PHL). Used to check our data and for the Past days tab's hour-by-hour view.
 - Map tiles © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors.
 
 **Guidance behind the thresholds and advice**
