@@ -56,8 +56,8 @@ The Colab badge above opens the same notebook. Its first cell downloads the rest
 1. The data: 11,639 days of Philadelphia weather since 1995, and a table of danger days per year.
 2. Which wind directions bring dirtier air.
 3. A first model that fails (192 false alarms), then the fix.
-4. `Model (alert line per danger): accuracy 0.85 | caught 56 | missed 14 | false alarms 27`
-5. Checks by season, against the real airport weather station, an hour-by-hour example from the station, and across 35 places in the region.
+4. `Model (alert line per danger): accuracy 0.85 | caught 56 | missed 14 | false alarms 27`, then a shuffle test of which inputs matter.
+5. Checks by season, against the real airport weather station, an hour-by-hour example from the station, across 35 places in the region, and on old forecasts made up to 7 days ahead.
 6. **The week ahead (live):** how long the download took, then each of the next 7 days with whether it's a school day and its alerts. This needs an internet connection; without one it says so and everything else still runs.
 7. `Running on local URL: http://127.0.0.1:7860` — the app.
 
@@ -115,6 +115,18 @@ It is better than the baseline in fall and winter and slightly worse in spring a
 
 **By place:** we ran the Philadelphia model, without retraining, on 35 places across southeastern Pennsylvania, South Jersey and northern Delaware. Accuracy ranged from **0.81 to 0.86** (Center City: 0.85). The weakest places are in South Jersey, toward the coast.
 
+### What the model looks at
+
+We shuffled one input at a time on the test period and counted how much worse the alerts got (a "shuffle test," or permutation importance). For the weather dangers, the inputs that matter most are the **3-day average feels-like low** (accuracy drops 2.0 points when it's shuffled), the **time of year** (1.5) and the **north-south part of the wind direction** (1.4). For the air dangers, it's **fine particles (PM2.5)** (0.9). The drops are small because several inputs carry the same information (today's low, yesterday's low and the 3-day average), so they share the credit.
+
+Scikit-learn's quick built-in ranking said wind direction (east-west part) mattered most. The shuffle test showed it barely matters. The built-in ranking over-credits inputs the trees split on often, so we report the shuffle test. Chart: `docs/feature_importance.png`.
+
+### How far ahead can it see?
+
+The app shows a week, so we tested calls made 2 to 7 days ahead, using Open-Meteo's archive of old forecasts (Step 16): weather dangers only, on the same test school days.
+
+*Team: paste the Step 16 table here after running the notebook. Chart: `docs/days_ahead.png`.*
+
 ### Checked against real sensors
 
 Our weather history comes from a weather model (Open-Meteo), so we compared it with the real weather station at Philadelphia International Airport for the test period.
@@ -131,7 +143,7 @@ Our weather history comes from a weather model (Open-Meteo), so we compared it w
 - **One reading for the whole city.** The data can't tell neighborhoods apart.
 - **Wind is a daily average in the model.** Its wind input is one "main direction" for the whole day, which can hide changes during school hours. For example, on Nov 12, 2026 our daily data said east-northeast on a day when storms shifted the wind. Its gusts also run low: that day it had 21 mph where the airport measured 35 mph. The notebook shows the airport's real hour-by-hour readings for that day, but the model doesn't use them yet.
 - **Air quality is a computer-model estimate** (CAMS), not sensor readings, and only goes back to August 2022.
-- **The live calls can't be scored yet.** Every result above is from the test period, for next-day calls. Days 2 to 7 of the week ahead feed the model the *forecast* for the day before instead of measured weather. We never tested that, so treat those days as an early look that will change. The air-quality forecast only reaches about 5 days, so after that air dangers get no score. The hourly strip, the week graph and the map's temperatures are Open-Meteo's forecast, not our model.
+- **The live calls can't be scored yet.** Every result above is from the test period. Days 2 to 7 of the week ahead feed the model the *forecast* for the day before instead of measured weather. Step 16 tests that on old forecasts, but only for weather dangers, with estimated gusts, so treat those days as an early look that will change. The air-quality forecast only reaches about 5 days, so after that air dangers get no score. The hourly strip, the week graph and the map's temperatures are Open-Meteo's forecast, not our model.
 - **Holidays are ignored.** Every weekday from September to June counts as a school day.
 - **Some thresholds are our own settings** (20 °F, 1 inch of rain, 2 inches of snow). A district would set its own.
 
