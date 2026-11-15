@@ -25,7 +25,8 @@ Use this on Sunday morning. Take turns: one person explains a step out loud, the
 | 13. Real station | Compares our data and model with the airport's real weather station. | "Our data matched the real station on 98-99% of days. Against the station, we caught 45 and the baseline 38." |
 | 14. Hour by hour | Downloads the airport station's real hourly readings for the app. | "Our model uses one wind direction per day, which can hide a storm front. The app shows what the airport actually measured each hour, with lunch recess highlighted. The model doesn't use these hourly readings yet." |
 | 15. Region | Runs the same model on 35 nearby places. | "Accuracy stayed between 81% and 86% without retraining. It's weakest in South Jersey near the coast." |
-| 16. App | Shows the call, the plan, risk scores, maps and air quality for a chosen day. | "It replays past days so you can check its call against what really happened." |
+| 16. Live call | Downloads today's weather and air from Open-Meteo and scores tomorrow with the same trained model. | "This is the real forecast. Nothing is retrained: we build today's inputs the same way and ask the model. If the internet is down, it says so." |
+| 17. App | Shows tonight's call at the top, then lets you replay past days with the call, plan, risk scores, maps and air quality. | "The top is tonight's real call. Below, you can check its past calls against what really happened." |
 
 ## Words to get right
 
@@ -60,6 +61,8 @@ Not equally. By season, it beats the baseline in fall (0.93 against 0.88) and wi
 First, fix the rare dangers: use tomorrow's weather forecast as an input, since a forecast knows a storm is coming and yesterday's weather doesn't. Second, train a thunderstorm alert on the airport's decades of real storm reports. Third, use the airport's hourly readings in the model itself, so it can make a call for the recess hours instead of the whole day. Fourth, use real air sensors or NASA's TEMPO satellite so each neighborhood gets its own air reading. Fifth, add the real school calendar and let a district set its own thresholds.
 
 ## Questions a judge might push on
+
+- **"Is tonight's call accurate?"** We don't know yet, and we say so. Our accuracy numbers come from the test period. Tonight's call is a new prediction we can only score after tomorrow happens. The hourly strip under it is Open-Meteo's own forecast, not our model.
 
 - **"You tried several versions. Did you tune on the test set?"** Be honest: we saw test results from earlier versions during the weekend (3 years of data, one shared cutoff), and those failures pushed us to change the design. The final alert lines come only from the practice year. A stricter test would be a fresh period nobody has looked at, such as the months after November 2026.
 - **"Why is heavy rain 'not reliable' instead of just removed?"** Because a principal should know it's a blind spot. Hiding it would make the tool look more complete than it is.
