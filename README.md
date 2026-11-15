@@ -2,7 +2,9 @@
 
 **Veritas AI International High School Hackathon 2026, Climate track**
 
-Recess Ready is a planning tool for principals, teachers and school staff in Philadelphia. Each evening it looks at today's weather and air quality and says whether **tomorrow's recess needs a change of plan**, and why: too hot, too cold, or ozone smog. On 270 school days it had never seen, it caught **56 of 70** danger days. The simple guess "tomorrow will be like today" caught 47.
+Recess Ready is a planning tool for principals, teachers and school staff in Philadelphia. Each evening it says whether **tomorrow's recess needs a change of plan**, and why: too hot, too cold, ozone smog, and more. It checks the weather forecast against danger lines for heat, cold, rain, wind and snow, and uses our machine-learning model for air quality. On 270 past school days, using the forecasts as they were issued, it caught **59 of 70** danger days with 13 false alarms. Our model alone caught 56 (27 false alarms); "tomorrow will be like today" caught 47 (25).
+
+We first built a machine-learning model for everything. When we tested it against the plain weather forecast, the forecast won on weather dangers, so the app now uses each where it tested best. Every result, including that one, is below.
 
 *Prototype, not official guidance. Always follow National Weather Service alerts and your school district's policy.*
 
@@ -10,13 +12,19 @@ Recess Ready is a planning tool for principals, teachers and school staff in Phi
 
 ## Results at a glance
 
-| | Recess Ready | Baseline: "tomorrow will be like today" |
-|---|---|---|
-| Danger days caught (of 70, on 270 test school days it never saw) | **56** | 47 |
-| Weather danger days caught a week ahead (of 65, tested on old forecasts) | **45** | 29 |
-| Checked against the real airport weather station: danger days caught | **45** | 38 |
+On 270 test school days (September 2025 to November 2026), 70 with a danger:
 
-Where it fails: it can't yet alert on heavy rain, dangerous wind, heavy snow or smoke, and it can't see thunderstorms or ice. Details below.
+| | Caught | Missed | False alarms | F1 |
+|---|---|---|---|---|
+| **Recess Ready** (forecast + danger lines for weather, our model for air) | **59** | **11** | **13** | **0.83** |
+| Our machine-learning model alone | 56 | 14 | 27 | 0.73 |
+| Baseline: "tomorrow will be like today" | 47 | 23 | 25 | 0.66 |
+
+- Recess Ready vs our model alone: paired test p = 0.006. Vs "like today": p = 0.001.
+- Our model alone vs "like today": p = 0.38, so **that difference could be luck**.
+- Six days ahead, the forecast with our danger lines still caught 45 of 65 weather danger days.
+
+Where it fails: heavy rain, wind and snow had too few test days to trust; it can't alert on smoke; it can't see thunderstorms or ice. Details below.
 
 ![Recess Ready against the baseline on 270 test school days](docs/model_vs_baseline.png)
 
@@ -68,8 +76,8 @@ The Colab badge above opens the same notebook. Its first cell downloads the rest
 1. The data: 11,639 days of Philadelphia weather since 1995, and a table of danger days per year.
 2. Which wind directions bring dirtier air.
 3. A first model that fails (192 false alarms), then the fix.
-4. `Model (alert line per danger): accuracy 0.85 | caught 56 | missed 14 | false alarms 27`, then a shuffle test of which inputs matter.
-5. Checks by season, against the real airport weather station, an hour-by-hour example from the station, across 35 places in the region, and on old forecasts made up to 7 days ahead.
+4. `Model (alert line per danger): accuracy 0.85 | caught 56 | missed 14 | false alarms 27` (our model alone), then a shuffle test of which inputs matter.
+5. Checks by season, against the real airport weather station, an hour-by-hour example from the station, across 35 places in the region, and on old forecasts made up to 7 days ahead. Then every method on the same test days, with precision, recall, F1 and paired tests: `Hybrid (what the app uses)  59  11  13 ...`.
 6. **The week ahead (live):** how long the download took, then each of the next 7 days with whether it's a school day and its alerts. This needs an internet connection; without one it says so and everything else still runs.
 7. `Running on local URL: http://127.0.0.1:7860` — the app.
 
@@ -93,18 +101,49 @@ The **Results** tab shows the test-period results and how the model works.
 
 Every number here was printed by `notebooks/main.ipynb` with the versions in `requirements.txt`.
 
-**Test period:** 270 school days from September 2025 to November 2026. The model never saw them while learning. 70 of them had at least one danger.
+**Test period:** 270 school days from September 2025 to November 2026. Our model never saw them while learning. 70 of them had at least one danger.
 
-| | Danger days caught | Missed | False alarms | Accuracy |
-|---|---|---|---|---|
-| Baseline: "tomorrow will be like today" | 47 | 23 | 25 | 0.82 |
-| **Recess Ready** | **56** | **14** | 27 | **0.85** |
+### Every method on the same days (Step 16)
 
-Recess Ready caught 9 more danger days for 2 more false alarms.
+| Method | Caught | Missed | False alarms | Precision | Recall | F1 | Accuracy |
+|---|---|---|---|---|---|---|---|
+| **Recess Ready (hybrid)** | **59** | **11** | **13** | **0.82** | **0.84** | **0.83** | **0.91** |
+| Our model alone | 56 | 14 | 27 | 0.67 | 0.80 | 0.73 | 0.85 |
+| Forecast + danger lines (weather only) | 59 | 11 | 9 | 0.87 | 0.84 | 0.86 | 0.93 |
+| Baseline: "like today" | 47 | 23 | 25 | 0.65 | 0.67 | 0.66 | 0.82 |
 
-![The app's results section, with the same numbers](docs/app-results.png)
+Precision: when it alerts, how often a danger really happened. Recall: of the real danger days, how many it caught. F1 balances the two.
 
-### By danger
+**Is the difference real?** A paired test (McNemar's exact test) looks only at the days where one method was right and the other wasn't:
+- Our model alone vs "like today": 27 days vs 20, p = 0.38. **Not significant.**
+- Recess Ready vs our model alone: 26 vs 9, p = 0.006.
+- Recess Ready vs "like today": 37 vs 13, p = 0.001.
+
+**What we found.** Our machine-learning model only sees today's weather. A weather forecast comes from a physics simulation that already knows a cold front is coming. Tested on the forecasts as they were issued the day before (Open-Meteo's archive), the forecast with our own danger lines beat our model on weather dangers. So the app now uses:
+- the forecast for heat, cold, rain, wind and snow;
+- our model for smog and smoke, where there is no archive of old air-quality forecasts to test against.
+
+On "any danger," the forecast alone actually does slightly better than the hybrid (9 false alarms instead of 13). Ozone days in Philadelphia mostly fall on hot days the forecast already flags. What our model adds is **naming** the ozone days (6 of 9 caught), which changes the plan to "outdoor with limits" instead of moving indoors.
+
+**How this was decided, honestly:** we chose the hybrid after seeing these test results. We didn't change any danger line or alert line, but a stricter check would score it on a fresh period nobody has looked at, such as the months after November 2026.
+
+![Recess Ready, our model alone and the baseline on 270 test school days](docs/model_vs_baseline.png)
+
+### Recess Ready, by danger
+
+| Danger | Decided by | Real days | Caught | Missed | False alarms |
+|---|---|---|---|---|---|
+| Too cold | forecast | 45 | 41 | 4 | 2 |
+| Too hot | forecast | 16 | 15 | 1 | 4 |
+| Ozone smog | our model | 9 | 6 | 3 | 10 |
+| Smoke and particles | our model | 5 | 0 | 5 | 0 |
+| Dangerous wind | forecast | 5 | 0 | 5 | 2 |
+| Heavy rain | forecast | 3 | 2 | 1 | 5 |
+| Heavy snow | forecast | 1 | 1 | 0 | 1 |
+
+Rain, wind and snow had too few test days to trust either way. Wind gusts are estimated in the old forecasts, which likely explains 0 of 5 wind days; the live app uses real gust forecasts.
+
+### Our model alone, by danger
 
 | Danger | Real days | Recess Ready caught | Recess Ready false alarms | Baseline caught | Baseline false alarms |
 |---|---|---|---|---|---|
@@ -116,9 +155,11 @@ Recess Ready caught 9 more danger days for 2 more false alarms.
 | Heavy rain | 3 | 0 | 0 | 0 | 6 |
 | Heavy snow | 1 | 0 | 0 | 1 | 4 |
 
-The model beats the baseline on the three common dangers. It gives **no alerts at all** for the four rare ones (see "Where it fails").
+Our model alone catches more cold, heat and ozone days than the baseline, but with more false alarms; on those three dangers its overall accuracy (0.86) is the same as the baseline's (0.87). It gives **no alerts at all** for the four rare ones.
 
 ### Fairness: does it work equally well across groups?
+
+These checks are for **our model alone** (we ran them before the forecast comparison; we didn't have time to repeat them for the hybrid).
 
 **By season** (accuracy on "any danger tomorrow"):
 
@@ -143,23 +184,21 @@ Scikit-learn's quick built-in ranking said wind direction (east-west part) matte
 
 ### How far ahead can it see?
 
-The app shows a week, so we tested calls made 2 to 7 days ahead, using Open-Meteo's archive of old forecasts (Step 16): weather dangers only, on the same test school days.
+The app shows a week, so we tested calls made 1 to 7 days ahead, using Open-Meteo's archive of old forecasts (Step 16): weather dangers only, on the same test school days. 65 of the 270 test school days had a weather danger.
 
-65 of the 270 test school days had a weather danger.
-
-| Days ahead | Recess Ready caught | False alarms | Accuracy | Baseline caught | Baseline false alarms | Baseline accuracy |
+| Days ahead | Forecast + danger lines: caught | False alarms | Our model alone: caught | False alarms | "Like today": caught | False alarms |
 |---|---|---|---|---|---|---|
-| 1 (tomorrow) | 52 | 24 | 0.86 | 42 | 21 | 0.84 |
-| 2 | 51 | 30 | 0.84 | 36 | 24 | 0.80 |
-| 3 | 49 | 24 | 0.85 | 35 | 28 | 0.79 |
-| 4 | 50 | 24 | 0.86 | 31 | 34 | 0.75 |
-| 5 | 46 | 24 | 0.84 | 29 | 33 | 0.74 |
-| 6 | 46 | 25 | 0.84 | 27 | 33 | 0.74 |
-| 7 | 45 | 25 | 0.83 | 29 | 34 | 0.74 |
+| 1 (tomorrow) | **58** | **10** | 52 | 24 | 42 | 21 |
+| 2 | **53** | **5** | 51 | 30 | 36 | 24 |
+| 3 | **54** | **5** | 49 | 24 | 35 | 28 |
+| 4 | **52** | **12** | 50 | 24 | 31 | 34 |
+| 5 | **49** | **7** | 46 | 24 | 29 | 33 |
+| 6 | 45 | **11** | **46** | 25 | 27 | 33 |
+| 7 | not tested | | 45 | 25 | 29 | 34 |
 
-Recess Ready holds up across the week: it still catches 45 of 65 weather danger days a week ahead, while "it will be like today" falls to 29. The model leans on the weather forecast, and forecasts stay useful for days, while today's weather says less and less about next week. The gap grows from 10 danger days (tomorrow) to 16 (a week out).
+The forecast with our danger lines is the best of the three up to 5 days ahead. By 6 days ahead it catches about as many as our model, with fewer false alarms. "Like today" falls off fast. The archive only goes back 6 days, so 7 days ahead is untested for the forecast.
 
-Limits: weather dangers only (no archive of old air forecasts); gusts are estimated; the 1-day row uses measured weather, so it isn't exactly comparable with the others. 
+Limits: weather dangers only (no archive of old air forecasts); gusts are estimated; for our model, the 1-day row uses measured weather, so it isn't exactly comparable with its other rows.
 
 ![How far ahead it can see](docs/days_ahead.png)
 
@@ -172,15 +211,18 @@ Our weather history comes from a weather model (Open-Meteo), so we compared it w
 
 ### Where it fails
 
-- **Rare dangers are switched off.** Heavy rain, dangerous wind, heavy snow and smoke were too rare in our practice year to set an alert line, so the model never alerted on them. Those dangers happened 14 times in the test period and it caught none. The app marks them "not reliable yet." Example: 1 inch of rain on October 30, 2025, with no alert.
-- **Thunderstorms and ice are invisible to it.** Open-Meteo's history recorded zero of either, so we couldn't train on them. The airport station reported **12 thunderstorm days and 4 freezing-rain days** in the test period.
-- **Ozone alerts are noisy:** 6 caught, but 10 false alarms.
-- **Its scores are not percent chances.** We told the model to pay extra attention to rare dangers, which inflates their scores. The app shows a 0-100 "risk score" with an alert line instead.
+- **Our machine-learning model lost to the plain forecast on weather dangers.** This is our biggest finding. The app uses the forecast for weather, and keeps our model only for smog and smoke.
+- **Rain, wind and snow are barely tested.** The test period had only 3 heavy-rain days, 5 wind days and 1 snow day. The forecast caught 2 of 3 rain days and 0 of 5 wind days (with estimated gusts). The app labels these alerts "not well tested."
+- **No smoke alerts.** Our model never alerts on smoke and particles (0 of 5 caught).
+- **Ozone alerts are noisy:** 6 of 9 caught, but 10 false alarms.
+- **Thunderstorms and ice are invisible to it.** Open-Meteo's history recorded zero of either, so we couldn't train on them. The airport station reported **12 thunderstorm days and 4 freezing-rain days** in the test period. The app flags thunderstorms in the hourly forecast and tells staff to check the National Weather Service.
+- **"Too cold" is the day's lowest feels-like temperature**, usually around dawn, not during recess. Our danger lines are for whole days.
+- **We looked at test results while building.** Earlier versions were scored on the test period (see "What we tried"), and we chose the hybrid after seeing the forecast comparison. Danger lines and alert lines were never tuned on it, but a fresh test period would be stricter.
+- **The truth is weather-model data** (ERA5), not sensors. We checked it against the airport station (98-99% agreement), but couldn't do the same for air quality.
+- **Risk scores are not percent chances.** We told the model to pay extra attention to rare dangers, which inflates their scores. The app shows a 0-100 "risk score" with an alert line instead.
 - **One reading for the whole city.** The data can't tell neighborhoods apart.
-- **Wind is a daily average in the model.** Its wind input is one "main direction" for the whole day, which can hide changes during school hours. For example, on Nov 12, 2026 our daily data said east-northeast on a day when storms shifted the wind. Its gusts also run low: that day it had 21 mph where the airport measured 35 mph. The Past days tab shows the airport's real hour-by-hour readings, but the model doesn't use them yet.
-- **Air quality is a computer-model estimate** (CAMS), not sensor readings, and only goes back to August 2022.
-- **The live calls can't be scored yet.** Every result above is from the test period. Days 2 to 7 of the week ahead feed the model the *forecast* for the day before instead of measured weather. Step 16 tests that on old forecasts, but only for weather dangers, with estimated gusts, so treat those days as an early look that will change. The air-quality forecast only reaches about 5 days, so after that air dangers get no score. The hourly strip, the week graph and the map's temperatures are Open-Meteo's forecast, not our model.
-- **Holidays in the test.** The test results count every weekday from September to June as a school day. The live week ahead does skip weekends and federal holidays, plus the School District of Philadelphia's 2026-27 days off, listed in `NO_SCHOOL_DAYS` (Step 17). A district would keep that list up to date.
+- **The live calls can't be scored yet.** Every result above is from the test period. The air-quality forecast only reaches about 5 days, so after that the app says air quality wasn't checked. If forecast data is missing, the app makes no call instead of a reassuring one.
+- **Holidays in the test.** The test counts every weekday from September to June as a school day. The live week ahead skips weekends, federal holidays and the School District of Philadelphia's 2026-27 days off (`NO_SCHOOL_DAYS`, Step 17).
 - **Some thresholds are our own settings** (20 °F, 1 inch of rain, 2 inches of snow). A district would set its own.
 
 ### What we tried that didn't work
@@ -197,8 +239,9 @@ These came from earlier versions of the notebook during the weekend:
 - **Model:** two random forests (scikit-learn). One learns the five weather dangers from 30 years. The other learns the two air dangers from the years that have air data.
 - **Split by time:** train before September 2025, test after. Never shuffled.
 - **Alert lines:** each danger gets its own, chosen on the 2024-25 school year with one rule: a missed danger day costs twice as much as a false alarm. The test period is not used for this.
-- **Baseline:** tomorrow's dangers are the same as today's.
-- **Live:** the app downloads the last 3 days and the next 7 from Open-Meteo's free forecast API for Philadelphia and the 35 region places, builds the same inputs, and runs the trained model. Nothing is retrained. Tomorrow uses today's weather (the tested setup); later days use the forecast for the day before.
+- **Baselines:** "tomorrow's dangers are the same as today's," and a tougher one: the weather forecast for that day, made the day before, with our danger lines.
+- **The call the app makes (the hybrid):** weather dangers from the forecast plus our danger lines (it beat our model in testing); air dangers from our model. Each day shows a "Forecast check" with every number next to its danger line, and our model's risk scores as a second opinion.
+- **Live:** the app downloads the last 3 days and the next 7 from Open-Meteo's free forecast API for Philadelphia and the 35 region places. Nothing is retrained. If forecast data is missing, it makes no call. Past the ~5-day air forecast, it says air quality wasn't checked.
 
 A side finding: Philadelphia's dirtiest air arrives on winds from the south and southwest (average AQI 83, against 60 on north winds). Hot days also go with worse air (correlation 0.53). That is a pattern, not proof of cause.
 

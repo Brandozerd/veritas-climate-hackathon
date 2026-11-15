@@ -4,7 +4,7 @@ Use this on Sunday morning. Take turns: one person explains a step out loud, the
 
 ## The project in 30 seconds
 
-> Recess Ready helps a Philadelphia principal decide, the evening before, whether tomorrow's recess needs a change of plan. It looks at today's weather and air and gives each of seven dangers a risk score. On 270 school days it had never seen, it caught 56 of the 70 danger days. Just assuming "tomorrow will be like today" caught 47. It is reliable for heat, cold and ozone, and we show clearly that it can't yet handle rare dangers like heavy rain.
+> Recess Ready helps a Philadelphia principal decide, the evening before, whether tomorrow's recess needs a change of plan. We built a machine-learning model that beat "tomorrow will be like today", 56 danger days caught against 47, but that difference could be luck (p = 0.38). Then we tested it against the plain weather forecast with our danger lines, and the forecast won on weather dangers. So the app uses the forecast for heat, cold, rain, wind and snow, and our model for smog and smoke. On 270 past school days it caught 59 of 70 danger days with 13 false alarms, clearly better than our model alone (p = 0.006).
 
 ## Step by step
 
@@ -27,6 +27,7 @@ Use this on Sunday morning. Take turns: one person explains a step out loud, the
 | 15. Region | Runs the same model on 35 nearby places. | "Accuracy stayed between 81% and 86% without retraining. It's weakest in South Jersey near the coast." |
 | 9b. Shuffle test | Shuffles one input at a time and counts how much worse the alerts get. | "The 3-day average feels-like low matters most for weather. For air, it's a temperature change, then PM2.5. The quick built-in ranking said wind direction, but the shuffle test proved it barely matters, so we trust the shuffle test." |
 | 16. How far ahead? | Feeds the model old forecasts made 2-7 days ahead and scores it on the test days. | "The app shows a week, so we tested the whole week. A week ahead it still caught 45 of 65 weather danger days; the baseline caught 29. Weather dangers only, because there's no archive of old air forecasts." |
+| 16b. A tougher baseline | Scores the plain forecast with our danger lines, and the hybrid, with precision, recall, F1 and a paired test. | "The forecast beat our model on weather, because it already knows a cold front is coming. So the app uses each where it tested best. We decided that after seeing the test, and we say so." |
 | 17. Week ahead (live) | Downloads the last 3 days and next 7 from Open-Meteo for Philadelphia and 35 places, and scores each day with the same trained model. | "Tomorrow's call uses today's weather, exactly how we tested it. Days 2 to 7 use the forecast instead, which we haven't tested, so we call them an early look." |
 | 18. App | Three tabs: the week ahead, past days, and results. | "Week ahead is the real forecast. Past days lets you check any test day: what we would have said, and what actually happened. Results is the scorecard." |
 
@@ -48,16 +49,19 @@ For each of seven dangers, whether it will happen tomorrow in Philadelphia. It's
 Our data is a small table: about 6,600 rows and 24 inputs. Random forests work well on tables, need little tuning, and we can explain them: trees asking yes/no questions and voting. A neural network would be harder to explain and has no clear advantage on data this size. We did not test other models, so we can't claim this one is the best.
 
 **What's the baseline, and how much better are you?**
-The baseline says tomorrow's dangers equal today's. On the test period it caught 47 danger days, missed 23 and raised 25 false alarms. We caught 56, missed 14 and raised 27. So 9 more danger days caught for 2 more false alarms. Accuracy is 0.85 against 0.82.
+Two baselines. "Tomorrow will be like today" caught 47 of 70 danger days with 25 false alarms. Our model alone caught 56 with 27, but a paired test says that gap could be luck (p = 0.38). The tougher baseline is the weather forecast with our danger lines: on weather dangers it beat our model (58 of 65 caught, 10 false alarms, against 52 and 24). So Recess Ready uses the forecast for weather and our model for air: 59 caught, 13 false alarms, F1 0.83. That beats our model alone (p = 0.006) and "like today" (p = 0.001).
+
+**"So why do you need machine learning at all?"**
+Be honest: for weather dangers, we don't; the forecast is better, and finding that out is one of our results. Our model is used for smog and smoke, where there's no archive of old air forecasts to test against. On "any danger" the forecast alone does slightly better than our hybrid (9 false alarms against 13), because ozone days mostly fall on hot days the forecast already flags. What our model adds is naming the ozone days (6 of 9), which changes the plan to "outdoor with limits" instead of indoors. Next step: train a model that uses the forecast as an input.
 
 **Why do you trust your accuracy? How did you check for leakage?**
-Four things. Inputs only come from today or earlier. We split by time, so the test period comes after all training data. Alert lines were chosen on a separate practice year. And 85% is a modest number: it isn't suspiciously high. We also scored the model against a real weather station it never trained on, and it still beat the baseline (45 caught against 38).
+Inputs only come from today or earlier, and tomorrow's answers are shifted correctly. We split by time, so the test period comes after all training data. Alert lines were chosen on a separate practice year with a separate model. The forecast results use forecasts as they were issued the day before, not the weather that happened. We also checked against a real weather station. And we're honest about one weakness: we looked at test results while building, and chose the hybrid after seeing the forecast comparison, so a fresh test period would be stricter.
 
 **Where does it fail, and why?**
-Three places. It gives no alerts for heavy rain, wind, snow or smoke, because they were too rare in our practice year to set an alert line; those dangers happened 14 times in the test period and we caught none. It can't see thunderstorms or ice at all, because our weather history never records them; the airport reported 12 thunderstorm days and 4 freezing-rain days. And ozone alerts are noisy: 6 caught but 10 false alarms.
+First, our own model lost to the forecast on weather dangers. Second, rain, wind and snow had only 3, 5 and 1 test days, so nothing about them is well tested, and our model never alerts on smoke. It can't see thunderstorms or ice at all, because our weather history never records them; the airport reported 12 thunderstorm days and 4 freezing-rain days. And ozone alerts are noisy: 6 caught but 10 false alarms.
 
 **Does it work equally well across groups?**
-Not equally. By season, it beats the baseline in fall (0.93 against 0.88) and winter (0.77 against 0.72), and is slightly behind in spring (0.82 against 0.83) and June (0.73 against 0.77). By place, accuracy across 35 places in the region ranges from 0.81 to 0.86, weakest in South Jersey.
+These checks are for our model alone; we didn't have time to repeat them for the hybrid. Not equally. By season, it beats the baseline in fall (0.93 against 0.88) and winter (0.77 against 0.72), and is slightly behind in spring (0.82 against 0.83) and June (0.73 against 0.77). By place, accuracy across 35 places in the region ranges from 0.81 to 0.86, weakest in South Jersey.
 
 **What would you do with more time?**
 First, fix the rare dangers: use tomorrow's weather forecast as an input, since a forecast knows a storm is coming and yesterday's weather doesn't. Second, train a thunderstorm alert on the airport's decades of real storm reports. Third, use the airport's hourly readings in the model itself, so it can make a call for the recess hours instead of the whole day. Fourth, use real air sensors or NASA's TEMPO satellite so each neighborhood gets its own air reading. Fifth, add the real school calendar and let a district set its own thresholds.
