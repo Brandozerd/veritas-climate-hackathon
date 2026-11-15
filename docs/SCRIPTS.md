@@ -40,52 +40,54 @@ Fill the ⟨ ⟩ blanks from the app right before recording (the selected day's 
 
 ## 5-minute finals demo
 
-Roles: **Brandon** drives the app and explains the model and results. **Write-up lead** opens, covers the limits and closes. Switch speakers at the marked times, so each of you talks for about half.
+Roles: **Brandon** drives the app and explains the model and results. **Faadi** opens, covers the limits and closes. Each of you talks for about half. Every number below is from the saved notebook or the app.
 
-**0:00-0:40 · The decision (Write-up lead; Brandon drives)**
-*Week ahead tab, next school day selected.*
+**Before you start (2 minutes):** run `python run.py`, open the app, leave it on the Week ahead tab in dark mode, and open a second browser tab already on Past days → Mon, Jan 26, 2026. Close everything else.
 
-> Every evening a principal decides whether tomorrow's recess goes outside. Recess Ready answers that in one line, with the reason and a plan. This is tomorrow's real call for Philadelphia, made from tonight's forecast.
+**0:00-0:40 · The decision (Faadi; Brandon drives)**
+*Week ahead tab, the next school day selected.*
+
+> Every evening, a principal in Philadelphia decides whether tomorrow's recess goes outside. Most schools decide the next morning, with no time to plan. Recess Ready makes that call the night before, in one line, with the reason and a plan. This is the real call for the next school day, from tonight's forecast.
 
 **0:40-1:30 · How it works (Brandon)**
-*Point at the Forecast check, then the risk-score panel.*
+*Point at the Forecast check rows, then the risk-score card and its countdown.*
 
-> Two parts. For heat, cold, rain, wind and snow, we check the weather forecast against fixed danger lines: wind chill 20, heat index 90, and so on. For air quality, we trained two random forests on 30 years of Philadelphia weather and 3 years of air data. Those give risk scores, not percent chances: we told the model to pay extra attention to rare dangers, so its scores run high. Each danger has an alert line chosen on a separate practice year.
+> For heat, cold, rain, wind and snow, we check the forecast against clear danger lines, like a wind chill of 20 degrees or a heat index of 90. For smog and smoke, two random forests trained on 30 years of Philadelphia weather and air quality since 2022 give a risk score. Each danger has its own alert line, chosen on a separate practice year, where a missed danger counts twice as much as a false alarm. And because forecasts change, the app re-checks every 10 minutes: this countdown shows the next check, and if a call flips, a banner says which day changed and why.
 
-**1:30-2:30 · Historical replay (Brandon)**
-*Past days tab → Dec 3, 2025.*
+**1:30-2:30 · Replay a real day (Brandon)**
+*Switch to the second tab: Past days → Mon, Jan 26, 2026.*
 
-> Here's December 3rd, 2025. On the left is everything we knew the evening before: the forecast said a feels-like low of 22, just above our line, so the call was outdoor recess. Below is what actually happened: no danger. Recess Ready was right. Our model alone raised a false alarm here, and "like today" was right too. Every test day can be checked like this.
->
-> *(Optional second day: Dec 4, 2025, a correct cold alert.)*
+> This is Monday, January 26th, a day from our test period that the model never trained on. The evening before, the forecast said a feels-like low of minus 1, past our 20-degree line, so the call was: plan indoor recess. Below is what actually happened at the airport station, hour by hour. At 11 AM, recess time, it felt like 10 degrees. Recess Ready was right. You can replay any of the 270 test days like this, including the ones we got wrong.
 
 **2:30-3:30 · Results (Brandon)**
-*Results tab: research question box, then the all-dangers table.*
+*Results tab: the research-question box, then the three score cards.*
 
-> Our research question: can machine learning beat the forecast plus clear danger lines? Our answer is no. On 270 test school days with 70 danger days, the forecast caught 59 with 9 false alarms. Our model alone caught 56 with 27. Our hybrid, what the app uses, caught 59 with 13. Our model did beat "tomorrow will be like today," which caught 47, but a paired test says that gap could be luck. We checked a second period, the 2024-25 school year, and the finding looked the same.
+> Our research question: can machine learning beat the weather forecast plus clear danger lines? On 270 test school days with 70 danger days, "tomorrow will be like today" caught 47. Our model alone caught 56, with 27 false alarms. Recess Ready, the forecast for weather plus our model for air, caught 59 with 13. Then we tried a second time: machine learning on top of the forecast, with the design written down before we ran it. It caught 49. So our honest answer, from two attempts, is no: the forecast was hard to beat, and the app uses what tested best.
 
-**3:30-4:20 · Limits (Write-up lead)**
-*Scroll to "How we tested" and the label note.*
+**3:30-4:20 · Limits (Faadi)**
+*Scroll to "What it can't do yet".*
 
-> Three honest limits. First, we chose the hybrid after seeing test results, so these numbers are exploratory. Second, our labels use the whole day's coldest or hottest feels-like. At the airport during recess, only 15 of our 45 "too cold" days were actually below 20. Third, heavy rain, wind and snow had only a handful of test days, and thunderstorms and ice aren't in our data at all. If forecast data is missing, the app makes no call instead of a reassuring one.
+> Three honest limits. First, we chose the app's design after seeing test results, so our numbers are exploratory, not a clean final exam. Second, our labels use the whole day's coldest or hottest feels-like: at recess time, only 15 of 45 "too cold" days actually hit 20 degrees. Third, heavy rain, wind and snow had only a handful of test days, and thunderstorms and ice aren't in our data at all. If forecast data is missing, the app makes no call instead of a falsely reassuring one.
 
-**4:20-5:00 · Impact (Write-up lead)**
-*Back to Week ahead, click Copy message for staff.*
+**4:20-5:00 · Impact (Faadi)**
+*Back to Week ahead.*
 
-> Recess Ready is decision support, not an authority: staff make the call, with the evidence in front of them. It knows the school calendar, checks after-school hours, and one click shares the plan. Next, we'd train a model that uses the forecast as an input, test it on fresh months, and add neighborhood air sensors. Thank you.
+> Recess Ready is decision support, not an authority: staff make the call, with the evidence in front of them. It knows the school calendar, checks after-school hours, and flags changes before the morning. Next, we'd save several years of forecasts and try machine learning again, add neighborhood air sensors, and test it with real school staff. It's a prototype, not official guidance. Thank you.
 
-**Backup plan:** record this whole demo once beforehand. If the live app or Wi-Fi fails, play the recording and keep talking.
+**If the live forecast fails on stage:** the Week ahead tab shows the saved backup, labeled "Saved forecast, not live". Say: "No internet here, so it's showing its saved backup and labeling it, which is what it's built to do." Then go straight to Past days.
+
+**Backup plan:** record this whole demo once beforehand. If the app or Wi-Fi fails completely, play the recording and keep talking.
 
 ---
 
-**In Q&A:** either of you can answer anything, but split by default: Brandon takes model, data and app questions; the Write-up lead takes limits, impact and "why should schools trust it" questions.
+**In Q&A:** either of you can answer anything, but split by default: Brandon takes model, data and app questions; Faadi takes limits, impact and "why should schools trust it" questions.
 
 ## The five hardest questions (one-line answers; details in `TEACH_BACK.md`)
 
-1. **Why use ML if the forecast is better?** We tested that hypothesis instead of assuming it; the answer was no, and that's our finding.
-2. **Did you overfit your test set?** Partly: we didn't tune on it, but we chose the hybrid after looking, so the results are exploratory, and our git timeline shows when.
+1. **Why use ML if the forecast is better?** We tested that instead of assuming it, twice (ML alone, and ML on top of the forecast); both times the answer was no, and that's our finding.
+2. **Did you overfit your test set?** Partly: we never tuned on it, but we chose the hybrid after looking, so the results are exploratory, and our git history shows when. The second try was written down before it ran.
 3. **Do your labels mean a dangerous recess?** Not exactly: they're whole-day extremes; only 15 of 45 "too cold" days crossed 20 °F at recess.
-4. **What does your ML add?** On the test period, no changed calls; on the practice year, 2 more danger days caught for 3 more false alarms.
+4. **What does your ML add?** On the test period, no changed calls. What it added is evidence: two honest tests showing a good forecast plus clear lines is hard to beat with one city's data.
 5. **Would you trust a school to use this?** As decision support, yes; as a safety authority, no. Staff decide, and it shows them why.
 
 ---
