@@ -285,11 +285,13 @@
     document.querySelectorAll(".rr-next").forEach(function (el) {
       var left = Math.round((Number(el.dataset.next) - Date.now()) / 1000);
       var last = el.dataset.last || "";
+      var sub = '<br><span style="font-size:15px;font-weight:600;color:#B8C4D0">' + last + "</span>";
+      var time = '<span style="color:#FF5A1F;font-variant-numeric:tabular-nums">';
       if (left > 0) {
         var m = Math.floor(left / 60), s = String(left % 60).padStart(2, "0");
-        el.textContent = "Next forecast check in " + m + ":" + s + " · " + last;
+        el.innerHTML = "Next forecast check in " + time + m + ":" + s + "</span>" + sub;
       } else {
-        el.textContent = "Checking for a new forecast… · " + last;
+        el.innerHTML = "Checking for a new forecast…" + sub;
       }
     });
   }
