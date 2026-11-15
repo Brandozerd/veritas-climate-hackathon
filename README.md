@@ -4,7 +4,7 @@
 
 Recess Ready is a planning tool for principals, teachers and school staff in Philadelphia. Each evening it says whether **tomorrow's recess needs a change of plan**, and why: too hot, too cold, ozone smog, and more. It checks the weather forecast against danger lines for heat, cold, rain, wind and snow, and uses our machine-learning model for air quality. On 270 past school days, using the forecasts as they were issued, it caught **59 of 70** danger days with 13 false alarms. Our model alone caught 56 (27 false alarms); "tomorrow will be like today" caught 47 (25).
 
-We first built a machine-learning model for everything. When we tested it against the plain weather forecast, the forecast won on weather dangers, so the app now uses each where it tested best. Every result, including that one, is below.
+We first built a machine-learning model for everything. When we tested it against the plain weather forecast, the forecast won. The app now uses the forecast for weather; our model's air-quality part didn't improve any call in testing either. Our main contribution is that honest evaluation, and every result is below, including the disappointing ones.
 
 *Prototype, not official guidance. Always follow National Weather Service alerts and your school district's policy.*
 
@@ -124,23 +124,54 @@ Precision: when it alerts, how often a danger really happened. Recall: of the re
 - the forecast for heat, cold, rain, wind and snow;
 - our model for smog and smoke, where there is no archive of old air-quality forecasts to test against.
 
-On "any danger," the forecast alone actually does slightly better than the hybrid (9 false alarms instead of 13). Ozone days in Philadelphia mostly fall on hot days the forecast already flags. What our model adds is **naming** the ozone days (6 of 9 caught), which changes the plan to "outdoor with limits" instead of moving indoors.
+**Our model's part didn't help on the test period.** On "any danger," the forecast alone does slightly better than the hybrid (9 false alarms instead of 13). We checked all 9 ozone days one by one:
+- Our model caught 6, but all 6 were days the forecast already flagged for heat, so **it changed no call**.
+- 4 of its 10 ozone false alarms fell on days with no weather alert, wrongly making them "outdoor with limits."
 
-**How this was decided, honestly:** we chose the hybrid after seeing these test results. We didn't change any danger line or alert line, but a stricter check would score it on a fresh period nobody has looked at, such as the months after November 2026.
+We kept our model for air in the app rather than make yet another change chosen by looking at the test period. A school using this today would be just as well served by the forecast alone. Our honest contribution is **the evaluation**: we built an ML model, tested it against the strongest simple alternative, and report that the simple alternative won.
+
+**These results are exploratory.** We chose the hybrid after seeing them. No danger line or alert line was tuned on the test period, but choosing a design after looking at test results biases them in its favor. A stricter check is below: the same comparison on the 2024-25 practice year, which we hadn't compared against the forecast.
+
+**How sure are these numbers?** 95% confidence intervals for F1, from re-scoring 2,000 random resamples of the test days:
+- Hybrid: 0.76-0.89
+- Forecast alone: 0.79-0.92
+- Our model alone: 0.65-0.81
+- "Like today": 0.57-0.75
+
+The hybrid and the forecast alone overlap almost completely: we can't tell them apart.
+
+The paired tests compare one school day at a time ("was the any-danger call right?"). Hybrid vs our model: 220 days both right, 26 only the hybrid right, 9 only our model right, 15 both wrong. We ran 3 tests; the two hybrid comparisons still pass a stricter cutoff for multiple tests (0.05 / 3).
+
+### A check on a period we hadn't compared yet (2024-25 practice year)
+
+The notebook repeats the comparison on the 2024-25 practice year, using the practice-year model from Step 9 (trained only before September 2024). Its alert lines were chosen on that year, which favors our model.
+
+*Team: paste the practice-year table from Step 16 here after running the notebook. Report it whichever way it comes out.*
+
+### Does a "danger day" mean a dangerous recess?
+
+Our labels use whole days ("too cold" = the day's lowest feels-like, usually around dawn). We checked them against the airport's real feels-like from 11 AM to 1 PM on test school days:
+
+| Danger | Labeled days | Also past the line at recess | Typical recess feels-like |
+|---|---|---|---|
+| Too cold (20 °F) | 45 | 15 | 22.9 °F |
+| Too hot (90 °F) | 16 | 6 | 89.2 °F |
+
+On no other test day did recess cross a line. So **our labels are cautious**: a "too cold" day is a cold day, but at recess it was usually a few degrees above our line. Recess Ready flags more days than recess-hour readings alone would. Predicting recess-hour conditions directly is a next step.
 
 ![Recess Ready, our model alone and the baseline on 270 test school days](docs/model_vs_baseline.png)
 
 ### Recess Ready, by danger
 
-| Danger | Decided by | Real days | Caught | Missed | False alarms |
-|---|---|---|---|---|---|
-| Too cold | forecast | 45 | 41 | 4 | 2 |
-| Too hot | forecast | 16 | 15 | 1 | 4 |
-| Ozone smog | our model | 9 | 6 | 3 | 10 |
-| Smoke and particles | our model | 5 | 0 | 5 | 0 |
-| Dangerous wind | forecast | 5 | 0 | 5 | 2 |
-| Heavy rain | forecast | 3 | 2 | 1 | 5 |
-| Heavy snow | forecast | 1 | 1 | 0 | 1 |
+| Danger | Decided by | Real days | Caught | Missed | False alarms | Precision | Recall |
+|---|---|---|---|---|---|---|---|
+| Too cold | forecast | 45 | 41 | 4 | 2 | 0.95 | 0.91 |
+| Too hot | forecast | 16 | 15 | 1 | 4 | 0.79 | 0.94 |
+| Ozone smog | our model | 9 | 6 | 3 | 10 | 0.38 | 0.67 |
+| Smoke and particles | our model | 5 | 0 | 5 | 0 | none | 0.00 |
+| Dangerous wind | forecast | 5 | 0 | 5 | 2 | 0.00 | 0.00 |
+| Heavy rain | forecast | 3 | 2 | 1 | 5 | 0.29 | 0.67 |
+| Heavy snow | forecast | 1 | 1 | 0 | 1 | 0.50 | 1.00 |
 
 Rain, wind and snow had too few test days to trust either way. Wind gusts are estimated in the old forecasts, which likely explains 0 of 5 wind days; the live app uses real gust forecasts.
 
@@ -216,19 +247,37 @@ Our weather history comes from a weather model (Open-Meteo), so we compared it w
 
 ### Where it fails
 
-- **Our machine-learning model lost to the plain forecast on weather dangers.** This is our biggest finding. The app uses the forecast for weather, and keeps our model only for smog and smoke.
+- **Our machine-learning model lost to the plain forecast on weather dangers.** This is our biggest finding. The app uses the forecast for weather and keeps our model for smog and smoke, but even there it didn't improve any call in testing.
 - **Rain, wind and snow are barely tested.** The test period had only 3 heavy-rain days, 5 wind days and 1 snow day. The forecast caught 2 of 3 rain days and 0 of 5 wind days (with estimated gusts). The app labels these alerts "not well tested."
 - **No smoke alerts.** Our model never alerts on smoke and particles (0 of 5 caught).
 - **Ozone alerts are noisy:** 6 of 9 caught, but 10 false alarms.
 - **Thunderstorms and ice are invisible to it.** Open-Meteo's history recorded zero of either, so we couldn't train on them. The airport station reported **12 thunderstorm days and 4 freezing-rain days** in the test period. The app flags thunderstorms in the hourly forecast and tells staff to check the National Weather Service.
 - **"Too cold" is the day's lowest feels-like temperature**, usually around dawn, not during recess. Our danger lines are for whole days.
-- **We looked at test results while building.** Earlier versions were scored on the test period (see "What we tried"), and we chose the hybrid after seeing the forecast comparison. Danger lines and alert lines were never tuned on it, but a fresh test period would be stricter.
+- **We looked at test results while building.** Earlier versions were scored on the test period (see the timeline), and we chose the hybrid after seeing the forecast comparison. Danger lines and alert lines were never tuned on it, but the reported results are exploratory, not an independent confirmation.
+- **Our labels are cautious.** On 30 of the 45 "too cold" test days, the airport's feels-like at recess was above 20 °F (typically about 23 °F).
+- **Our ML model added nothing to the calls on the test period.** Every ozone day it caught was already flagged for heat.
 - **The truth is weather-model data** (ERA5), not sensors. We checked it against the airport station (98-99% agreement), but couldn't do the same for air quality.
 - **Risk scores are not percent chances.** We told the model to pay extra attention to rare dangers, which inflates their scores. The app shows a 0-100 "risk score" with an alert line instead.
 - **One reading for the whole city.** The data can't tell neighborhoods apart.
 - **The live calls can't be scored yet.** Every result above is from the test period. The air-quality forecast only reaches about 5 days, so after that the app says air quality wasn't checked. If forecast data is missing, the app makes no call instead of a reassuring one.
 - **Holidays in the test.** The test counts every weekday from September to June as a school day. The live week ahead skips weekends, federal holidays and the School District of Philadelphia's 2026-27 days off (`NO_SCHOOL_DAYS`, Step 17).
 - **Some thresholds are our own settings** (20 °F, 1 inch of rain, 2 inches of snow). A district would set its own.
+
+### Development timeline (from our git history, Eastern time)
+
+So judges can see which results we looked at before each decision:
+
+| When | What happened |
+|---|---|
+| Fri, before kickoff | Repo skeleton only: this file's template, folders, `.gitignore`. |
+| Sat 12:39 PM | Started the notebook: data, dangers. |
+| Sat 1:31 PM | First model, time split, baseline, **first look at test results**. |
+| Sat 1:45 PM | One shared alert line, chosen on the practice year. |
+| Sat 4:57 PM | After seeing test results (missed 42 of 45 cold days): 30 years of weather, two forests. |
+| Sat 5:53 PM | Per-danger alert lines on the practice year (miss = 2x false alarm), trend inputs. **The model has not changed since.** |
+| Sat 7:20-8:34 PM | Live forecast, airport station checks, days-ahead test on old forecasts. |
+| Sun 12:22 AM | Audit: tested the forecast + danger lines on the test period; it beat our model, so **we switched the app to the hybrid after seeing that result**. |
+| Sun, later | Per-danger and ozone checks, confidence intervals, recess-hour check, and the practice-year check above. |
 
 ### What we tried that didn't work
 
